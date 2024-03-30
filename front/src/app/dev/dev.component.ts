@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { GridComponent, GridConfig } from '../components/grid/grid.component';
 import { GridUtilsService } from '../services/grid-utils.service';
+import { RandomGridComponent } from '../components/random-grid/random-grid.component';
 
 @Component({
   selector: 'dev',
@@ -8,16 +9,10 @@ import { GridUtilsService } from '../services/grid-utils.service';
   styleUrl: 'dev.component.scss',
   standalone: true,
   imports: [
-    GridComponent
+    GridComponent,
+    RandomGridComponent
   ]
 })
 export class DevComponent {
-
-  n = 20;
-
-  gridConfig: GridConfig = {
-    colors: this.gridUtilsService.generateColors(this.n)
-  };
-
   constructor(private gridUtilsService: GridUtilsService) {}
 }
