@@ -1,0 +1,9 @@
+<div class="flex flex-col border border-current rounded p-2">
+  @for (line of config().colors; track line) {
+    <div class="flex">
+      @for (color of line; track color) {
+        <square class="flex flex-grow" [color]="color"></square>
+      }
+    </div>
+  }
+</div>
