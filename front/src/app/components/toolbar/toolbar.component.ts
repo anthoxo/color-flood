@@ -12,10 +12,6 @@ import { MatButton } from '@angular/material/button';
 export class ToolbarComponent {
   constructor(private router: Router) {}
 
-  goToDev() {
-    this.router.navigate(['/dev']);
-  }
-
   goToHome() {
     this.router.navigate(['']);
   }
