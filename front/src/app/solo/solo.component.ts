@@ -1,4 +1,4 @@
-import { Component, HostBinding } from '@angular/core';
+import { Component, computed, HostBinding, signal } from '@angular/core';
 import { RandomGridComponent } from '../components/random-grid/random-grid.component';
 import { MatButtonModule } from '@angular/material/button';
 import { SoloRuleComponent } from './rule/solo-rule.component';
@@ -19,5 +19,6 @@ export class SoloComponent {
   @HostBinding('class.w-full') wFull = true;
   @HostBinding('class.h-full') hFull = true;
 
-  existFile = false;
+  file = signal<File | undefined>(undefined);
+  existFile = computed(() => this.file() !== undefined);
 }

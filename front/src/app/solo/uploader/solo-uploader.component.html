@@ -1,1 +1,11 @@
-<div>PLACEHOLDER FOR UPLOADING</div>
+<input hidden (change)="onFileSelected($event.target)" #fileInput type="file" id="file">
+<div class="flex flex-col items-center gap-y-2">
+  @if (isUploaded()) {
+    <span>File selected: {{ fileName() }}</span>
+  } @else {
+    <span>No file uploaded yet.</span>
+  }
+  <button mat-mini-fab color="accent" (click)="fileInput.click()">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
