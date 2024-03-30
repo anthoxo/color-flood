@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { GridComponent, GridConfig } from '../components/grid/grid.component';
+import { GridUtilsService } from '../services/grid-utils.service';
 
 @Component({
   selector: 'dev',
@@ -10,23 +11,13 @@ import { GridComponent, GridConfig } from '../components/grid/grid.component';
     GridComponent
   ]
 })
-export class DevComponent implements OnInit {
+export class DevComponent {
 
   n = 20;
 
-  gridConfig!: GridConfig;
+  gridConfig: GridConfig = {
+    colors: this.gridUtilsService.generateColors(this.n)
+  };
 
-  ngOnInit() {
-    const array: number[][] = [];
-    for (let i = 0; i < this.n; ++i) {
-      array.push([]);
-      for (let j = 0; j < this.n; ++j) {
-        array[i].push(Math.floor(Math.random() * 20));
-      }
-    }
-
-    this.gridConfig = {
-      colors: array
-    };
-  }
+  constructor(private gridUtilsService: GridUtilsService) {}
 }
