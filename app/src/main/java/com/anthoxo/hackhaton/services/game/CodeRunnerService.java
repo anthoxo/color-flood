@@ -37,9 +37,14 @@ public class CodeRunnerService {
                 process.outputWriter().write(line + "\n");
                 process.outputWriter().flush();
             }
-            String answer = scanner.nextLine();
-            Integer res = Integer.valueOf(answer);
-            game.run(turn, res);
+            try {
+                String answer = scanner.nextLine();
+                Integer res = Integer.valueOf(answer);
+                game.run(turn, res);
+            } catch (Exception ex) {
+                // handle exception here?
+                break;
+            }
             if (game.isFinished()) {
                 break;
             }
