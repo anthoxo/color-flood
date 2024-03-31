@@ -10,7 +10,7 @@
       <mat-spinner></mat-spinner>
     } @else {
       @if (gridResultDto() !== undefined) {
-        <solo-grid class="w-full h-full" [gridResultDto]="gridResultDto()"></solo-grid>
+        <grid-runner class="w-full h-full" [gridResultDto]="gridResultDto()"></grid-runner>
       } @else {
         <random-grid class="w-full h-full"></random-grid>
       }
