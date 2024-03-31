@@ -6,6 +6,24 @@ import java.util.stream.Collectors;
 
 public record Grid(List<List<Integer>> colors) {
 
+    public Grid(Grid grid) {
+        this(new ArrayList<>());
+        for (int i = 0; i < grid.colors.size(); i++) {
+            List<Integer> copy = new ArrayList<>();
+            for (int j = 0; j < grid.colors.get(i).size(); j++) {
+                copy.add(grid.colors.get(i).get(j));
+            }
+            this.colors.add(copy);
+        }
+    }
+
+    public boolean containsOnlyFourColors() {
+        return colors.stream()
+                .flatMap(List::stream)
+                .distinct()
+                .count() <= 4;
+    }
+
     public boolean containsOnlyTwoColors() {
         return colors.stream()
                 .flatMap(List::stream)
