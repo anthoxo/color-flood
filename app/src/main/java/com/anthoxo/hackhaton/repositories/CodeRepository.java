@@ -1,7 +1,6 @@
 package com.anthoxo.hackhaton.repositories;
 
-import com.anthoxo.hackhaton.models.Code;
-import com.anthoxo.hackhaton.models.Ladder;
+import com.anthoxo.hackhaton.entities.Code;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

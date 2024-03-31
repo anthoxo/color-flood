@@ -1,6 +1,6 @@
 package com.anthoxo.hackhaton.repositories;
 
-import com.anthoxo.hackhaton.models.User;
+import com.anthoxo.hackhaton.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

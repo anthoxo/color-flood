@@ -1,4 +1,4 @@
-package com.anthoxo.hackhaton.models;
+package com.anthoxo.hackhaton.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,8 +9,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "codes")
-public class Code {
+@Table(name = "ladders")
+public class Ladder {
 
   @Id
   @Column(name = "user_id")
@@ -21,13 +21,16 @@ public class Code {
   @MapsId
   private User user;
 
-  @Column(name = "code")
-  private String code;
+  @Column(name = "elo")
+  private float elo;
 
-  public Code() {
+  @Column(name = "fight_count")
+  private int fightCount;
+
+  public Ladder() {
   }
 
-  public Code(User user) {
+  public Ladder(User user) {
     this.user = user;
   }
 
@@ -47,11 +50,19 @@ public class Code {
     this.user = user;
   }
 
-  public String getCode() {
-    return code;
+  public float getElo() {
+    return elo;
   }
 
-  public void setCode(String code) {
-    this.code = code;
+  public void setElo(float elo) {
+    this.elo = elo;
+  }
+
+  public int getFightCount() {
+    return fightCount;
+  }
+
+  public void setFightCount(int fightCount) {
+    this.fightCount = fightCount;
   }
 }

@@ -1,8 +1,8 @@
 package com.anthoxo.hackhaton.services;
 
 import com.anthoxo.hackhaton.dtos.UserDto;
-import com.anthoxo.hackhaton.models.Ladder;
-import com.anthoxo.hackhaton.models.User;
+import com.anthoxo.hackhaton.entities.Ladder;
+import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.repositories.LadderRepository;
 import com.anthoxo.hackhaton.repositories.UserRepository;
 import java.util.List;

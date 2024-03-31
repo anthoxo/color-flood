@@ -1,6 +1,6 @@
 package com.anthoxo.hackhaton.dtos;
 
-import com.anthoxo.hackhaton.models.User;
+import com.anthoxo.hackhaton.entities.User;
 
 public record UserDto(Long id, String teamName, float elo,
                       int fightCount) {

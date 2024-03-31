@@ -1,4 +1,4 @@
-package com.anthoxo.hackhaton.models;
+package com.anthoxo.hackhaton.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
