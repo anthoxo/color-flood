@@ -51,4 +51,8 @@ export class SoloComponent {
         });
     }
   }
+
+  resetFile() {
+    this.file.set(undefined);
+  }
 }
