@@ -1,9 +1,10 @@
 import { Component, DestroyRef } from '@angular/core';
-import { GridComponent, GridConfig } from '../grid/grid.component';
+import { GridComponent } from '../grid/grid.component';
 import { GridUtilsService } from '../../services/grid-utils.service';
 import { interval, map, startWith, take } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
+import { Grid } from '../../models/grid.model';
 
 @Component({
   selector: 'random-grid',
@@ -15,7 +16,7 @@ import { AsyncPipe } from '@angular/common';
   ]
 })
 export class RandomGridComponent {
-  configs: GridConfig[] = [
+  grids: Grid[] = [
     {
       colors: this.gridUtilsService.generateColors(20)
     },
@@ -32,8 +33,8 @@ export class RandomGridComponent {
   config$ = interval(250)
     .pipe(
       takeUntilDestroyed(this.destroyRef),
-      map(val => this.configs[val % 4]),
-      startWith(this.configs[2]),
+      map(val => this.grids[val % 4]),
+      startWith(this.grids[2]),
       take(8)
     );
 

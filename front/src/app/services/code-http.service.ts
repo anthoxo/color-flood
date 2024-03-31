@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { GridConfig } from '../components/grid/grid.component';
+import { GridResultDto } from '../models/grid.model';
 
 @Injectable({ providedIn: 'root'})
 export class CodeHttpService {
@@ -9,6 +9,6 @@ export class CodeHttpService {
   publishCodeForSolo(file: File) {
     const formData = new FormData();
     formData.append("file", file);
-    return this.http.post<GridConfig>("http://localhost:8080/api/codes/solo", formData);
+    return this.http.post<GridResultDto>("http://localhost:8080/api/codes/solo", formData);
   }
 }

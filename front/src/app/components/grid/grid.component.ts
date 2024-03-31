@@ -1,10 +1,7 @@
 import { Component, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { SquareComponent } from '../square/square.component';
-
-export interface GridConfig {
-  colors: number[][];
-}
+import { Grid } from '../../models/grid.model';
 
 @Component({
   selector: 'grid',
@@ -16,5 +13,5 @@ export interface GridConfig {
   ]
 })
 export class GridComponent {
-  config = input.required<GridConfig>();
+  config = input.required<Grid>();
 }

@@ -1,8 +1,9 @@
 import { Component, HostBinding } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { GridUtilsService } from '../services/grid-utils.service';
-import { GridComponent, GridConfig } from '../components/grid/grid.component';
+import { GridComponent } from '../components/grid/grid.component';
 import { MatList, MatListItem, MatListItemLine, MatListItemTitle } from '@angular/material/list';
+import { Grid } from '../models/grid.model';
 
 @Component({
   selector: 'home',
@@ -21,7 +22,7 @@ export class HomeComponent {
   @HostBinding("class.w-full") wFull = true;
   @HostBinding("class.h-full") hFull = true;
 
-  gridConfigExample: GridConfig = {
+  gridExample: Grid = {
     colors: this.gridUtilsService.generateColors(5)
   };
 

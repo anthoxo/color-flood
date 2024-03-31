@@ -31,8 +31,8 @@ public class SoloRunService {
         File file = new File(tmpFilename);
         saveTemporaryFile(file, multipartFile);
 
-        int size = 20;
-        int numberOfColors = 3;
+        int size = 25;
+        int numberOfColors = 10;
 
         Grid initialGrid = gridService.init(size, numberOfColors);
         Player playerOne = new Player("local", StartingTile.TOP_LEFT, initialGrid);

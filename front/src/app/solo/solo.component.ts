@@ -4,8 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { SoloRuleComponent } from './rule/solo-rule.component';
 import { SoloUploaderComponent } from './uploader/solo-uploader.component';
 import { CodeHttpService } from '../services/code-http.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorUtilsService } from '../services/error-utils.service';
+import { GridResultDto } from '../models/grid.model';
+import { SoloGridComponent } from './grid/solo-grid.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'solo',
@@ -16,6 +18,8 @@ import { ErrorUtilsService } from '../services/error-utils.service';
     MatButtonModule,
     SoloRuleComponent,
     SoloUploaderComponent,
+    SoloGridComponent,
+    MatProgressSpinner,
   ]
 })
 export class SoloComponent {
@@ -25,15 +29,26 @@ export class SoloComponent {
   file = signal<File | undefined>(undefined);
   existFile = computed(() => this.file() !== undefined);
 
+  loading = signal<boolean>(false);
+  gridResultDto = signal<GridResultDto | undefined>(undefined);
+
   constructor(private codeHttpService: CodeHttpService, private errorUtilsService: ErrorUtilsService) {}
 
   runCode(): void {
     const file = this.file();
     if (file !== undefined) {
+      this.loading.set(true);
       this.codeHttpService.publishCodeForSolo(file)
         .subscribe({
-        error: ({ error }) => this.errorUtilsService.displayAsSnack(error)
-      });
+          next: (dto) => {
+            this.gridResultDto.set(dto);
+            this.loading.set(false);
+          },
+          error: ({ error }) => {
+            this.errorUtilsService.displayAsSnack(error);
+            this.loading.set(false);
+          },
+        });
     }
   }
 }
