@@ -8,6 +8,7 @@ import { ErrorUtilsService } from '../services/error-utils.service';
 import { GridResultDto } from '../models/grid.model';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { GridRunnerComponent } from '../components/grid-runner/grid-runner.component';
+import { GridRunnerStatisticsComponent } from '../components/grid-runner-statistics/grid-runner-statistics.component';
 
 @Component({
   selector: 'solo',
@@ -20,6 +21,7 @@ import { GridRunnerComponent } from '../components/grid-runner/grid-runner.compo
     SoloUploaderComponent,
     MatProgressSpinner,
     GridRunnerComponent,
+    GridRunnerStatisticsComponent,
   ]
 })
 export class SoloComponent {

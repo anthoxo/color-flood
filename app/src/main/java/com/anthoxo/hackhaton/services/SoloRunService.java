@@ -18,16 +18,23 @@ public class SoloRunService {
 
     private final GridService gridService;
     private final CodeRunnerService codeRunnerService;
+    private final GameStatisticsService gameStatisticsService;
 
-    public SoloRunService(GridService gridService, CodeRunnerService codeRunnerService) {
+    public SoloRunService(
+            GridService gridService,
+            CodeRunnerService codeRunnerService,
+            GameStatisticsService gameStatisticsService
+    ) {
         this.gridService = gridService;
         this.codeRunnerService = codeRunnerService;
+        this.gameStatisticsService = gameStatisticsService;
     }
 
     public GridResultDto run(MultipartFile multipartFile)
             throws IOException, InterruptedException {
         UUID uuid = UUID.randomUUID();
-        String tmpFilename = String.format("src/main/resources/tmp/%s-%s", uuid, multipartFile.getOriginalFilename());
+        String tmpFilename = String.format("src/main/resources/tmp/%s-%s", uuid,
+                multipartFile.getOriginalFilename());
         File file = new File(tmpFilename);
         saveTemporaryFile(file, multipartFile);
 
@@ -35,18 +42,18 @@ public class SoloRunService {
         int numberOfColors = 10;
 
         Grid initialGrid = gridService.init(size, numberOfColors);
-        Player playerOne = new Player("local", StartingTile.TOP_LEFT, initialGrid);
+        Player playerOne = new Player("local", StartingTile.TOP_LEFT,
+                initialGrid);
         Game game = new Game(List.of(playerOne), initialGrid);
         codeRunnerService.run(tmpFilename, game);
         cleanTemporaryFile(file);
 
-        return new GridResultDto(game.getHistory(), game.getPlayers()
-                .stream()
-                .map(player -> new GridResultDto.Statistic(player.name(), player.currentColor()))
-                .collect(Collectors.toList()));
+
+        return new GridResultDto(game.getHistory(), gameStatisticsService.getStatistics(game));
     }
 
-    private void saveTemporaryFile(File destinationFile, MultipartFile multipartFile) {
+    private void saveTemporaryFile(File destinationFile,
+            MultipartFile multipartFile) {
         try (OutputStream os = new FileOutputStream(destinationFile)) {
             os.write(multipartFile.getBytes());
         } catch (IOException e) {
