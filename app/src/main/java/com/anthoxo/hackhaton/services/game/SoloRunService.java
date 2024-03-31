@@ -1,4 +1,4 @@
-package com.anthoxo.hackhaton.services;
+package com.anthoxo.hackhaton.services.game;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
 import com.anthoxo.hackhaton.models.Game;
@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class SoloRunService {
@@ -42,18 +41,29 @@ public class SoloRunService {
         int numberOfColors = 10;
 
         Grid initialGrid = gridService.init(size, numberOfColors);
-        Player playerOne = new Player("local", StartingTile.TOP_LEFT,
-                initialGrid);
+        Player playerOne = new Player(
+                "local",
+                StartingTile.TOP_LEFT,
+                tmpFilename
+        );
         Game game = new Game(List.of(playerOne), initialGrid);
-        codeRunnerService.run(tmpFilename, game);
-        cleanTemporaryFile(file);
 
+        try {
+            codeRunnerService.run(game);
+        } finally {
+            cleanTemporaryFile(file);
+        }
 
-        return new GridResultDto(game.getHistory(), gameStatisticsService.getStatistics(game));
+        return new GridResultDto(
+                game.getHistory(),
+                gameStatisticsService.getStatistics(game)
+        );
     }
 
-    private void saveTemporaryFile(File destinationFile,
-            MultipartFile multipartFile) {
+    private void saveTemporaryFile(
+            File destinationFile,
+            MultipartFile multipartFile
+    ) {
         try (OutputStream os = new FileOutputStream(destinationFile)) {
             os.write(multipartFile.getBytes());
         } catch (IOException e) {

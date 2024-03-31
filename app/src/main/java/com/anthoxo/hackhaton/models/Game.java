@@ -25,9 +25,11 @@ public final class Game {
     }
 
     public void run(int turn, int newColor) {
-        Player player = players.get(turn % players.size());
-        if (players.stream().map(Player::currentColor).noneMatch(color -> color == newColor)) {
-            player.color(newColor);
+        Player currentPlayer = players.get(turn % players.size());
+        if (players.stream().map(player -> player.currentColor(grid))
+                .noneMatch(color -> color == newColor)) {
+            grid.color(currentPlayer.startingTile(),
+                    currentPlayer.currentColor(grid), newColor);
         }
         history.add(new Grid(grid));
     }

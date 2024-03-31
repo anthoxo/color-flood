@@ -2,7 +2,7 @@ package com.anthoxo.hackhaton.controllers;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
 import com.anthoxo.hackhaton.services.FileCheckerService;
-import com.anthoxo.hackhaton.services.SoloRunService;
+import com.anthoxo.hackhaton.services.game.SoloRunService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

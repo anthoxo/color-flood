@@ -1,30 +1,39 @@
-package com.anthoxo.hackhaton.services;
+package com.anthoxo.hackhaton.services.game;
 
 import com.anthoxo.hackhaton.models.Game;
+import com.anthoxo.hackhaton.models.Grid;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 @Service
 public class CodeRunnerService {
 
-    public void run(String pathFile, Game game)
+    private final GridService gridService;
+
+    public CodeRunnerService(GridService gridService) {
+        this.gridService = gridService;
+    }
+
+    public void run(Game game)
             throws IOException, InterruptedException {
-        int size = game.getSize();
-        ProcessBuilder processBuilder = new ProcessBuilder("java", pathFile);
+        ProcessBuilder processBuilder = new ProcessBuilder("java", game.getPlayers().get(0).pathFile());
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
 
+        int size = game.getSize();
         process.outputWriter().write(size + "\n");
         process.outputWriter().flush();
 
         Scanner scanner = new Scanner(process.getInputStream());
         int turn = 0;
         do {
-            for (int i = 0; i < size; ++i) {
-                String line = game.getGrid().colors().get(i).stream().map(String::valueOf).collect(Collectors.joining(","));
+            Grid rotatedGrid = gridService.rotateGridIfNeeded(game.getGrid(), game.getPlayers().get(0).startingTile());
+            List<String> lines = gridService.getFormatGridForProgram(rotatedGrid);
+            for (String line : lines) {
                 process.outputWriter().write(line + "\n");
                 process.outputWriter().flush();
             }

@@ -6,19 +6,14 @@ public final class Player {
 
     private final String name;
     private final StartingTile startingTile;
-    private final Grid grid;
+    private final String pathFile;
     private int currentColor;
 
-    public Player(String name, StartingTile startingTile, Grid grid) {
+    public Player(String name, StartingTile startingTile, String pathFile) {
         this.name = name;
         this.startingTile = startingTile;
-        this.grid = grid;
+        this.pathFile = pathFile;
         this.currentColor = -1;
-    }
-
-    public void color(int newColor) {
-        grid.color(startingTile, currentColor, newColor);
-        this.currentColor = newColor;
     }
 
     public String name() {
@@ -29,11 +24,7 @@ public final class Player {
         return startingTile;
     }
 
-    public Grid grid() {
-        return grid;
-    }
-
-    public int currentColor() {
+    public int currentColor(Grid grid) {
         if (currentColor == -1) {
             int size = grid.colors().size();
             return switch (startingTile) {
@@ -42,6 +33,10 @@ public final class Player {
             };
         }
         return currentColor;
+    }
+
+    public String pathFile() {
+        return pathFile;
     }
 
     @Override
@@ -55,13 +50,12 @@ public final class Player {
         var that = (Player) obj;
         return Objects.equals(this.name, that.name) &&
                 Objects.equals(this.startingTile, that.startingTile) &&
-                Objects.equals(this.grid, that.grid) &&
                 this.currentColor == that.currentColor;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, startingTile, grid, currentColor);
+        return Objects.hash(name, startingTile, currentColor);
     }
 
     @Override
@@ -69,7 +63,6 @@ public final class Player {
         return "Player[" +
                 "name=" + name + ", " +
                 "startingTile=" + startingTile + ", " +
-                "grid=" + grid + ", " +
                 "color=" + currentColor + ']';
     }
 
