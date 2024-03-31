@@ -1,16 +1,30 @@
 package com.anthoxo.hackhaton.controllers;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.anthoxo.hackhaton.services.FileCheckerService;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/codes")
 public class CodeController {
-  @PostMapping
-  public void deployCode(DeployCodeRequestDto dto) {
 
-  }
+    private final FileCheckerService fileCheckerService;
 
-  private record DeployCodeRequestDto(String teamName) { }
+    public CodeController(FileCheckerService fileCheckerService) {
+        this.fileCheckerService = fileCheckerService;
+    }
+
+    @PostMapping
+    public void deployCode(DeployCodeRequestDto dto) {
+
+    }
+
+    @PostMapping("/solo")
+    public void runSolo(@RequestParam("file") MultipartFile file) {
+        fileCheckerService.checkFileExtension(file);
+    }
+
+    private record DeployCodeRequestDto(String teamName) {
+
+    }
 }

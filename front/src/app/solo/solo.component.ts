@@ -3,6 +3,7 @@ import { RandomGridComponent } from '../components/random-grid/random-grid.compo
 import { MatButtonModule } from '@angular/material/button';
 import { SoloRuleComponent } from './rule/solo-rule.component';
 import { SoloUploaderComponent } from './uploader/solo-uploader.component';
+import { CodeHttpService } from '../services/code-http.service';
 
 @Component({
   selector: 'solo',
@@ -21,4 +22,13 @@ export class SoloComponent {
 
   file = signal<File | undefined>(undefined);
   existFile = computed(() => this.file() !== undefined);
+
+  constructor(private codeHttpService: CodeHttpService) {}
+
+  runCode(): void {
+    const file = this.file();
+    if (file !== undefined) {
+      this.codeHttpService.publishCodeForSolo(file).subscribe();
+    }
+  }
 }

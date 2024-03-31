@@ -16,7 +16,13 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -36,7 +42,8 @@ public class HackathonSecurityConfig {
         .authorizeHttpRequests(c ->
             c
                 .requestMatchers(
-                    mvcMatcherBuilder.pattern("/api/users")
+                    mvcMatcherBuilder.pattern("/api/users"),
+                    mvcMatcherBuilder.pattern("/api/codes/**")
                 )
                 .permitAll()
                 .requestMatchers(
@@ -50,4 +57,20 @@ public class HackathonSecurityConfig {
         );
     return http.build();
   }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(
+                Arrays.asList("http://localhost:4200")
+        );
+        configuration.setAllowedMethods(
+                Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS")
+        );
+        configuration.addAllowedHeader("Content-Type");
+        configuration.addExposedHeader("Content-Disposition");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
