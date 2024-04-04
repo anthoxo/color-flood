@@ -48,9 +48,9 @@ public class DuelRunService {
                 tmpFilename
         );
         Player playerTwo = new Player(
-                "local-2",
+                "random-example",
                 StartingTile.BOTTOM_RIGHT,
-                tmpFilename
+                CodeRunnerService.RANDOM_LOCATION
         );
         Game game = new Game(List.of(playerOne, playerTwo), initialGrid);
 

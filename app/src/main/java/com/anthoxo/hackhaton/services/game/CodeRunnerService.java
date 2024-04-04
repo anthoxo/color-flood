@@ -14,6 +14,8 @@ import java.util.Scanner;
 @Service
 public class CodeRunnerService {
 
+    public static final String RANDOM_LOCATION = "src/main/resources/examples/RandomExample.java";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(
             CodeRunnerService.class);
 
@@ -40,10 +42,10 @@ public class CodeRunnerService {
                 }).toList();
 
         int size = game.getSize();
-        int numberOfPlayers = game.getSize();
+        int numberOfPlayers = game.getPlayers().size();
         for (Process process : processes) {
-            write(process, size + "\n");
-            write(process, numberOfPlayers + "\n");
+            write(process, String.valueOf(size));
+            write(process, String.valueOf(numberOfPlayers));
         }
 
         int turn = 0;
@@ -56,13 +58,14 @@ public class CodeRunnerService {
             List<String> lines = gridService.getFormatGridForProgram(
                     rotatedGrid);
             for (String line : lines) {
-                write(process, line + "\n");
+                write(process, line);
             }
             try {
                 String answer = scanner.nextLine();
                 Integer res = Integer.valueOf(answer);
                 game.run(turn, res);
             } catch (Exception ex) {
+                LOGGER.error(ex.getMessage(), ex);
                 // handle exception here?
                 break;
             }

@@ -48,19 +48,19 @@ public class BattleRoyaleRunService {
                 tmpFilename
         );
         Player playerTwo = new Player(
-                "local-2",
+                "random-1",
                 StartingTile.BOTTOM_RIGHT,
-                tmpFilename
+                CodeRunnerService.RANDOM_LOCATION
         );
         Player playerThree = new Player(
-                "local-3",
+                "random-2",
                 StartingTile.TOP_RIGHT,
-                tmpFilename
+                CodeRunnerService.RANDOM_LOCATION
         );
         Player playerFour = new Player(
-                "local-4",
+                "random-3",
                 StartingTile.BOTTOM_LEFT,
-                tmpFilename
+                CodeRunnerService.RANDOM_LOCATION
         );
         Game game = new Game(List.of(playerOne, playerTwo, playerThree, playerFour), initialGrid);
 
