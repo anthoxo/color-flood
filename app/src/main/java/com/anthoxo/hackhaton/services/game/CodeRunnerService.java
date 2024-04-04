@@ -40,8 +40,10 @@ public class CodeRunnerService {
                 }).toList();
 
         int size = game.getSize();
+        int numberOfPlayers = game.getSize();
         for (Process process : processes) {
             write(process, size + "\n");
+            write(process, numberOfPlayers + "\n");
         }
 
         int turn = 0;
