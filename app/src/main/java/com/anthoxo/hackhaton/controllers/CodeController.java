@@ -1,7 +1,7 @@
 package com.anthoxo.hackhaton.controllers;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
-import com.anthoxo.hackhaton.services.FileCheckerService;
+import com.anthoxo.hackhaton.services.file.FileCheckerService;
 import com.anthoxo.hackhaton.services.game.BattleRoyaleRunService;
 import com.anthoxo.hackhaton.services.game.DuelRunService;
 import com.anthoxo.hackhaton.services.game.SoloRunService;
@@ -47,7 +47,7 @@ public class CodeController {
     public GridResultDto runVersus(@RequestParam("file") MultipartFile file)
             throws IOException, InterruptedException {
         fileCheckerService.checkFileExtension(file);
-        return duelRunService.runAlone(file);
+        return duelRunService.runWithRandom(file);
     }
 
     @PostMapping("/battle")

@@ -5,6 +5,7 @@ import com.anthoxo.hackhaton.models.Game;
 import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.Player;
 import com.anthoxo.hackhaton.models.StartingTile;
+import com.anthoxo.hackhaton.services.file.FileUtilsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,24 +20,23 @@ import java.util.UUID;
 public class BattleRoyaleRunService {
 
     private final GridService gridService;
+    private final FileUtilsService fileUtilsService;
     private final CodeRunnerService codeRunnerService;
     private final GameStatisticsService gameStatisticsService;
 
     public BattleRoyaleRunService(GridService gridService,
+            FileUtilsService fileUtilsService,
             CodeRunnerService codeRunnerService,
             GameStatisticsService gameStatisticsService) {
         this.gridService = gridService;
+        this.fileUtilsService = fileUtilsService;
         this.codeRunnerService = codeRunnerService;
         this.gameStatisticsService = gameStatisticsService;
     }
 
     public GridResultDto runAlone(MultipartFile multipartFile)
             throws IOException, InterruptedException {
-        UUID uuid = UUID.randomUUID();
-        String tmpFilename = String.format("src/main/resources/tmp/%s-%s", uuid,
-                multipartFile.getOriginalFilename());
-        File file = new File(tmpFilename);
-        saveTemporaryFile(file, multipartFile);
+        File file = fileUtilsService.generateTmpFile(multipartFile);
 
         int size = 10;
         int numberOfColors = 5;
@@ -45,7 +45,7 @@ public class BattleRoyaleRunService {
         Player playerOne = new Player(
                 "local-1",
                 StartingTile.TOP_LEFT,
-                tmpFilename
+                file.getPath()
         );
         Player playerTwo = new Player(
                 "random-1",
@@ -67,27 +67,12 @@ public class BattleRoyaleRunService {
         try {
             codeRunnerService.run(game);
         } finally {
-            cleanTemporaryFile(file);
+            fileUtilsService.deleteFile(file);
         }
 
         return new GridResultDto(
                 game.getHistory(),
                 gameStatisticsService.getStatistics(game)
         );
-    }
-
-    private void saveTemporaryFile(
-            File destinationFile,
-            MultipartFile multipartFile
-    ) {
-        try (OutputStream os = new FileOutputStream(destinationFile)) {
-            os.write(multipartFile.getBytes());
-        } catch (IOException e) {
-            throw new IllegalArgumentException("File could not be written", e);
-        }
-    }
-
-    private void cleanTemporaryFile(File file) {
-        file.delete();
     }
 }

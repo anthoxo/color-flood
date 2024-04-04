@@ -1,4 +1,4 @@
-package com.anthoxo.hackhaton.services;
+package com.anthoxo.hackhaton.services.file;
 
 import com.anthoxo.hackhaton.models.LanguageExtension;
 import org.springframework.stereotype.Service;
