@@ -7,7 +7,7 @@ export interface Grid {
   colors: number[][];
 }
 
-export type StartingTile = 'TOP_LEFT' | 'BOTTOM_RIGHT';
+export type StartingTile = 'TOP_LEFT' | 'BOTTOM_RIGHT' | 'BOTTOM_LEFT' | 'TOP_RIGHT';
 
 export interface Statistic {
   name: string;

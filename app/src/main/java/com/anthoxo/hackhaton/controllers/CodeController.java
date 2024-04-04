@@ -2,6 +2,7 @@ package com.anthoxo.hackhaton.controllers;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
 import com.anthoxo.hackhaton.services.FileCheckerService;
+import com.anthoxo.hackhaton.services.game.BattleRoyaleRunService;
 import com.anthoxo.hackhaton.services.game.DuelRunService;
 import com.anthoxo.hackhaton.services.game.SoloRunService;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +17,18 @@ public class CodeController {
     private final FileCheckerService fileCheckerService;
     private final SoloRunService soloRunService;
     private final DuelRunService duelRunService;
+    private final BattleRoyaleRunService battleRoyaleRunService;
 
     public CodeController(
             FileCheckerService fileCheckerService,
-            SoloRunService soloRunService, DuelRunService duelRunService
+            SoloRunService soloRunService,
+            DuelRunService duelRunService,
+            BattleRoyaleRunService battleRoyaleRunService
     ) {
         this.fileCheckerService = fileCheckerService;
         this.soloRunService = soloRunService;
         this.duelRunService = duelRunService;
+        this.battleRoyaleRunService = battleRoyaleRunService;
     }
 
     @PostMapping
@@ -43,6 +48,13 @@ public class CodeController {
             throws IOException, InterruptedException {
         fileCheckerService.checkFileExtension(file);
         return duelRunService.runAlone(file);
+    }
+
+    @PostMapping("/battle")
+    public GridResultDto runBattleRoyale(@RequestParam("file") MultipartFile file)
+            throws IOException, InterruptedException {
+        fileCheckerService.checkFileExtension(file);
+        return battleRoyaleRunService.runAlone(file);
     }
 
     private record DeployCodeRequestDto(String teamName) {

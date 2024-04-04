@@ -24,6 +24,10 @@ export class ToolbarComponent {
     this.router.navigate(['/versus']);
   }
 
+  goToBattleRoyale() {
+    this.router.navigate(['/battle']);
+  }
+
   goToLadder() {
     this.router.navigate(['/ladder']);
   }

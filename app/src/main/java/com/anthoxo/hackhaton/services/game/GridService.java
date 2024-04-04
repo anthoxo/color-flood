@@ -35,12 +35,32 @@ public class GridService {
             return new Grid(grid);
         }
         List<List<Integer>> colors = new ArrayList<>();
-        for (int i = grid.colors().size() - 1; i >= 0; --i) {
-            List<Integer> line = new ArrayList<>();
-            for (int j = grid.colors().size() - 1; j >= 0; --j) {
-                line.add(grid.colors().get(i).get(j));
+        if (startingTile == StartingTile.BOTTOM_RIGHT) {
+            for (int i = grid.colors().size() - 1; i >= 0; --i) {
+                List<Integer> line = new ArrayList<>();
+                for (int j = grid.colors().size() - 1; j >= 0; --j) {
+                    line.add(grid.colors().get(i).get(j));
+                }
+                colors.add(line);
             }
-            colors.add(line);
+        }
+        if (startingTile == StartingTile.BOTTOM_LEFT) {
+            for (int j = 0; j < grid.colors().size(); ++j) {
+                List<Integer> line = new ArrayList<>();
+                for (int i = grid.colors().size() - 1; i >= 0; --i) {
+                    line.add(grid.colors().get(i).get(j));
+                }
+                colors.add(line);
+            }
+        }
+        if (startingTile == StartingTile.TOP_RIGHT) {
+            for (int j = grid.colors().size() - 1; j >= 0; --j) {
+                List<Integer> line = new ArrayList<>();
+                for (int i = 0; i < grid.colors().size(); ++i) {
+                    line.add(grid.colors().get(i).get(j));
+                }
+                colors.add(line);
+            }
         }
         return new Grid(colors);
     }

@@ -17,4 +17,10 @@ export class CodeHttpService {
     formData.append("file", file);
     return this.http.post<GridResultDto>("http://localhost:8080/api/codes/versus", formData);
   }
+
+  pushCodeForBattleRoyale(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return this.http.post<GridResultDto>("http://localhost:8080/api/codes/battle", formData);
+  }
 }

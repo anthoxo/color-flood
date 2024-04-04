@@ -52,6 +52,10 @@ public record Grid(List<List<Integer>> colors) {
             case BOTTOM_RIGHT ->
                     color(colors.size() - 1, colors.size() - 1, previousColor,
                             newColor, passed);
+            case BOTTOM_LEFT -> color(colors.size() - 1, 0, previousColor, newColor, passed);
+            case TOP_RIGHT ->
+                    color(0, colors.size() - 1, previousColor,
+                            newColor, passed);
         }
     }
 

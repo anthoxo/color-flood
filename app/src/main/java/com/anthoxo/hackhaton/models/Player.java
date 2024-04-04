@@ -30,6 +30,8 @@ public final class Player {
             return switch (startingTile) {
                 case TOP_LEFT -> grid.colors().get(0).get(0);
                 case BOTTOM_RIGHT -> grid.colors().get(size - 1).get(size - 1);
+                case BOTTOM_LEFT -> grid.colors().get(size-1).get(0);
+                case TOP_RIGHT -> grid.colors().get(0).get(size-1);
             };
         }
         return currentColor;

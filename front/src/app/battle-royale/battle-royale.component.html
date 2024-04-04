@@ -1,0 +1,24 @@
+<div class="flex h-full w-full gap-x-8">
+  <div class="lg:w-1/3 w-1/2 flex flex-col justify-between">
+    <battle-royale-rule></battle-royale-rule>
+    <uploader [file]="file()" (onFileChange)="file.set($event)"></uploader>
+    <div class="flex w-full gap-x-2">
+      <button class="w-full" mat-raised-button color="primary" [disabled]="!existFile()" (click)="resetFile()">RESET</button>
+      <button class="w-full" mat-raised-button color="accent" [disabled]="!existFile()" (click)="runCode()">RUN !!</button>
+    </div>
+  </div>
+  <div class="lg:w-1/3 w-0">
+    @if (gridResultDto() !== undefined) {
+      <grid-runner-statistics [gridResultDto]="gridResultDto()"></grid-runner-statistics>
+    }
+  </div>
+  <div class="lg:w-1/3 w-1/2 flex justify-center items-center">
+    @if (loading()) {
+      <mat-spinner></mat-spinner>
+    } @else if (gridResultDto() !== undefined){
+      <grid-runner class="w-full h-full" [gridResultDto]="gridResultDto()"></grid-runner>
+    } @else {
+      <random-grid class="w-full h-full"></random-grid>
+    }
+  </div>
+</div>

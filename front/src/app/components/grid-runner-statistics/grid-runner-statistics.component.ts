@@ -5,7 +5,9 @@ import { MatListModule } from '@angular/material/list';
 
 const LABEL_BY_STARTING_TILE: Record<StartingTile, string> = {
   TOP_LEFT: 'Top left.',
-  BOTTOM_RIGHT: 'Bottom right.'
+  BOTTOM_RIGHT: 'Bottom right.',
+  BOTTOM_LEFT: 'Bottom left.',
+  TOP_RIGHT: 'Top right.',
 }
 
 @Component({
