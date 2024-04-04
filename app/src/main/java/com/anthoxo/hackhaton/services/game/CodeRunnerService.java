@@ -25,12 +25,6 @@ public class CodeRunnerService {
 
     public void run(Game game)
             throws IOException, InterruptedException {
-        ProcessBuilder processBuilder1 = new ProcessBuilder("java",
-                game.getPlayers().get(0).pathFile());
-        ProcessBuilder processBuilder2 = new ProcessBuilder("java",
-                game.getPlayers().get(1).pathFile());
-        processBuilder1.redirectErrorStream(true);
-        processBuilder2.redirectErrorStream(true);
         List<Process> processes = game.getPlayers().stream()
                 .map(player -> {
                     ProcessBuilder processBuilder = new ProcessBuilder("java",
@@ -52,8 +46,8 @@ public class CodeRunnerService {
 
         int turn = 0;
         do {
-            Process process = processes.get(turn % 2);
-            Player player = game.getPlayers().get(turn % 2);
+            Process process = processes.get(turn % game.getPlayers().size());
+            Player player = game.getPlayers().get(turn % game.getPlayers().size());
             Scanner scanner = new Scanner(process.getInputStream());
             Grid rotatedGrid = gridService.rotateGridIfNeeded(game.getGrid(),
                     player.startingTile());

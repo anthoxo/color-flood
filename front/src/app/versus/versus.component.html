@@ -1,6 +1,6 @@
 <div class="flex h-full w-full gap-x-8">
   <div class="lg:w-1/3 w-1/2 flex flex-col justify-between">
-    <solo-rule></solo-rule>
+    <versus-rule></versus-rule>
     <uploader [file]="file()" (onFileChange)="file.set($event)"></uploader>
     <div class="flex w-full gap-x-2">
       <button class="w-full" mat-raised-button color="primary" [disabled]="!existFile()" (click)="resetFile()">RESET</button>

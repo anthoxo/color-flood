@@ -1,17 +1,17 @@
-import { Component, computed, effect, EventEmitter, input, Output, signal } from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'solo-uploader',
-  templateUrl: 'solo-uploader.component.html',
+  selector: 'uploader',
+  templateUrl: 'uploader.component.html',
   standalone: true,
   imports: [
     MatButtonModule,
     MatIconModule
   ]
 })
-export class SoloUploaderComponent {
+export class UploaderComponent {
   file = input.required<File | undefined>();
   @Output() onFileChange = new EventEmitter<File | undefined>();
 

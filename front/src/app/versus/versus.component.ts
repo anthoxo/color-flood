@@ -1,30 +1,30 @@
 import { Component, computed, HostBinding, signal } from '@angular/core';
-import { RandomGridComponent } from '../components/random-grid/random-grid.component';
-import { MatButtonModule } from '@angular/material/button';
-import { SoloRuleComponent } from './rule/solo-rule.component';
-import { UploaderComponent } from '../components/uploader/uploader.component';
-import { CodeHttpService } from '../services/code-http.service';
-import { ErrorUtilsService } from '../services/error-utils.service';
-import { GridResultDto } from '../models/grid.model';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { GridRunnerComponent } from '../components/grid-runner/grid-runner.component';
 import { GridRunnerStatisticsComponent } from '../components/grid-runner-statistics/grid-runner-statistics.component';
+import { MatButton } from '@angular/material/button';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { RandomGridComponent } from '../components/random-grid/random-grid.component';
+import { UploaderComponent } from '../components/uploader/uploader.component';
+import { GridResultDto } from '../models/grid.model';
+import { CodeHttpService } from '../services/code-http.service';
+import { ErrorUtilsService } from '../services/error-utils.service';
+import { VersusRuleComponent } from './rule/versus-rule.component';
 
 @Component({
-  selector: 'solo',
-  templateUrl: './solo.component.html',
+  selector: 'versus',
+  templateUrl: 'versus.component.html',
   standalone: true,
   imports: [
-    RandomGridComponent,
-    MatButtonModule,
-    SoloRuleComponent,
-    UploaderComponent,
-    MatProgressSpinner,
     GridRunnerComponent,
     GridRunnerStatisticsComponent,
+    MatButton,
+    MatProgressSpinner,
+    RandomGridComponent,
+    VersusRuleComponent,
+    UploaderComponent
   ]
 })
-export class SoloComponent {
+export class VersusComponent {
   @HostBinding('class.w-full') wFull = true;
   @HostBinding('class.h-full') hFull = true;
 
@@ -40,7 +40,7 @@ export class SoloComponent {
     const file = this.file();
     if (file !== undefined) {
       this.loading.set(true);
-      this.codeHttpService.pushCodeForSolo(file)
+      this.codeHttpService.pushCodeForVersus(file)
         .subscribe({
           next: (dto) => {
             this.gridResultDto.set(dto);

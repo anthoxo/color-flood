@@ -35,6 +35,13 @@ public class CodeController {
     public GridResultDto runSolo(@RequestParam("file") MultipartFile file)
             throws IOException, InterruptedException {
         fileCheckerService.checkFileExtension(file);
+        return soloRunService.run(file);
+    }
+
+    @PostMapping("/versus")
+    public GridResultDto runVersus(@RequestParam("file") MultipartFile file)
+            throws IOException, InterruptedException {
+        fileCheckerService.checkFileExtension(file);
         return duelRunService.runAlone(file);
     }
 

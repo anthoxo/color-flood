@@ -20,6 +20,10 @@ export class ToolbarComponent {
     this.router.navigate(['/solo']);
   }
 
+  goToVersus() {
+    this.router.navigate(['/versus']);
+  }
+
   goToLadder() {
     this.router.navigate(['/ladder']);
   }
