@@ -2,7 +2,6 @@ package com.anthoxo.hackhaton.models;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record Grid(List<List<Integer>> colors) {
 
@@ -17,25 +16,11 @@ public record Grid(List<List<Integer>> colors) {
         }
     }
 
-    public boolean containsOnlyFourColors() {
+    public long getNumberOfColors() {
         return colors.stream()
                 .flatMap(List::stream)
                 .distinct()
-                .count() <= 4;
-    }
-
-    public boolean containsOnlyTwoColors() {
-        return colors.stream()
-                .flatMap(List::stream)
-                .distinct()
-                .count() <= 2;
-    }
-
-    public boolean containsOnlyOneColors() {
-        return colors.stream()
-                .flatMap(List::stream)
-                .distinct()
-                .count() <= 1;
+                .count();
     }
 
     public void color(StartingTile startingTile, int previousColor, int newColor) {

@@ -38,10 +38,7 @@ public class BattleRoyaleRunService {
             throws IOException, InterruptedException {
         File file = fileUtilsService.generateTmpFile(multipartFile);
 
-        int size = 10;
-        int numberOfColors = 5;
-
-        Grid initialGrid = gridService.init(size, numberOfColors);
+        Grid initialGrid = gridService.init(6);
         Player playerOne = new Player(
                 "local-1",
                 StartingTile.TOP_LEFT,

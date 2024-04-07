@@ -35,10 +35,7 @@ public final class Game {
     }
 
     public boolean isFinished() {
-        if (players.size() == 2) {
-            return grid.containsOnlyTwoColors();
-        }
-        return grid.containsOnlyOneColors();
+        return grid.getNumberOfColors() <= players.size();
     }
 
     public Grid getGrid() {

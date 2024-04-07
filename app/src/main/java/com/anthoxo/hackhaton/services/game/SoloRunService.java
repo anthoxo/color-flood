@@ -36,10 +36,7 @@ public class SoloRunService {
             throws IOException, InterruptedException {
         File file = fileUtilsService.generateTmpFile(multipartFile);
 
-        int size = 25;
-        int numberOfColors = 10;
-
-        Grid initialGrid = gridService.init(size, numberOfColors);
+        Grid initialGrid = gridService.init(2);
         Player playerOne = new Player(
                 "local",
                 StartingTile.TOP_LEFT,

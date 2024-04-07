@@ -12,13 +12,21 @@ import java.util.stream.Collectors;
 @Service
 public class GridService {
 
+    private static final int MIN_GRID_SIZE = 5;
+    private static final int MAX_GRID_SIZE = 25;
+
+    private static final int MAX_COLOR_NUMBER = 18;
+
     private final Random random;
 
     public GridService() {
         this.random = new Random();
     }
 
-    public Grid init(int size, int numberOfColors) {
+    public Grid init(int minNumberOfColors) {
+        int size = random.nextInt(MIN_GRID_SIZE, MAX_GRID_SIZE);
+        int numberOfColors = random.nextInt(minNumberOfColors, MAX_COLOR_NUMBER);
+
         List<List<Integer>> colors = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             List<Integer> line = new ArrayList<>();
