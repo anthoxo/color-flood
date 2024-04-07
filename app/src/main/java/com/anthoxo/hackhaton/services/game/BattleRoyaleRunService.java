@@ -10,27 +10,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class BattleRoyaleRunService {
 
     private final GridService gridService;
     private final FileUtilsService fileUtilsService;
-    private final CodeRunnerService codeRunnerService;
+    private final GameRunnerService gameRunnerService;
     private final GameStatisticsService gameStatisticsService;
 
     public BattleRoyaleRunService(GridService gridService,
             FileUtilsService fileUtilsService,
-            CodeRunnerService codeRunnerService,
+            GameRunnerService gameRunnerService,
             GameStatisticsService gameStatisticsService) {
         this.gridService = gridService;
         this.fileUtilsService = fileUtilsService;
-        this.codeRunnerService = codeRunnerService;
+        this.gameRunnerService = gameRunnerService;
         this.gameStatisticsService = gameStatisticsService;
     }
 
@@ -47,22 +44,22 @@ public class BattleRoyaleRunService {
         Player playerTwo = new Player(
                 "random-1",
                 StartingTile.BOTTOM_RIGHT,
-                CodeRunnerService.RANDOM_LOCATION
+                GameRunnerService.RANDOM_LOCATION
         );
         Player playerThree = new Player(
                 "random-2",
                 StartingTile.TOP_RIGHT,
-                CodeRunnerService.RANDOM_LOCATION
+                GameRunnerService.RANDOM_LOCATION
         );
         Player playerFour = new Player(
                 "random-3",
                 StartingTile.BOTTOM_LEFT,
-                CodeRunnerService.RANDOM_LOCATION
+                GameRunnerService.RANDOM_LOCATION
         );
         Game game = new Game(List.of(playerOne, playerTwo, playerThree, playerFour), initialGrid);
 
         try {
-            codeRunnerService.run(game);
+            gameRunnerService.run(game);
         } finally {
             fileUtilsService.deleteFile(file);
         }

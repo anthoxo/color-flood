@@ -43,7 +43,8 @@ public class HackathonSecurityConfig {
             c
                 .requestMatchers(
                     mvcMatcherBuilder.pattern("/api/users"),
-                    mvcMatcherBuilder.pattern("/api/codes/**")
+                    mvcMatcherBuilder.pattern("/api/codes/**"),
+                    mvcMatcherBuilder.pattern("/api/game/run/**")
                 )
                 .permitAll()
                 .requestMatchers(

@@ -23,7 +23,7 @@ export class GridRunnerStatisticsComponent {
   gridResultDto = input<GridResultDto>();
   historic = computed(() => this.gridResultDto()?.history ?? []);
 
-  turnNumber = computed(() => this.historic().length);
+  turnNumber = computed(() => this.historic().length - 1);
   statistics = computed(() => (this.gridResultDto()?.statistics ?? []).sort((a,b) => a.rank - b.rank));
 
   getLabel(startingTile: StartingTile): string {

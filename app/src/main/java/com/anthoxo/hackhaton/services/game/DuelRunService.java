@@ -18,16 +18,16 @@ public class DuelRunService {
 
     private final GridService gridService;
     private final FileUtilsService fileUtilsService;
-    private final CodeRunnerService codeRunnerService;
+    private final GameRunnerService gameRunnerService;
     private final GameStatisticsService gameStatisticsService;
 
     public DuelRunService(GridService gridService,
             FileUtilsService fileUtilsService,
-            CodeRunnerService codeRunnerService,
+            GameRunnerService gameRunnerService,
             GameStatisticsService gameStatisticsService) {
         this.gridService = gridService;
         this.fileUtilsService = fileUtilsService;
-        this.codeRunnerService = codeRunnerService;
+        this.gameRunnerService = gameRunnerService;
         this.gameStatisticsService = gameStatisticsService;
     }
 
@@ -44,12 +44,12 @@ public class DuelRunService {
         Player playerTwo = new Player(
                 "random-example",
                 StartingTile.BOTTOM_RIGHT,
-                CodeRunnerService.RANDOM_LOCATION
+                GameRunnerService.RANDOM_LOCATION
         );
         Game game = new Game(List.of(playerOne, playerTwo), initialGrid);
 
         try {
-            codeRunnerService.run(game);
+            gameRunnerService.run(game);
         } finally {
             fileUtilsService.deleteFile(file);
         }

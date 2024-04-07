@@ -6,9 +6,9 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RandomGridComponent } from '../components/random-grid/random-grid.component';
 import { UploaderComponent } from '../components/uploader/uploader.component';
 import { GridResultDto } from '../models/grid.model';
-import { CodeHttpService } from '../services/code-http.service';
 import { ErrorUtilsService } from '../services/error-utils.service';
 import { BattleRoyaleRuleComponent } from './rule/battle-royale-rule.component';
+import { GameRunHttpService } from '../services/game-run-http.service';
 
 @Component({
   selector: 'battle-royale',
@@ -34,13 +34,13 @@ export class BattleRoyaleComponent {
   loading = signal<boolean>(false);
   gridResultDto = signal<GridResultDto | undefined>(undefined);
 
-  constructor(private codeHttpService: CodeHttpService, private errorUtilsService: ErrorUtilsService) {}
+  constructor(private gameRunHttpService: GameRunHttpService, private errorUtilsService: ErrorUtilsService) {}
 
   runCode(): void {
     const file = this.file();
     if (file !== undefined) {
       this.loading.set(true);
-      this.codeHttpService.pushCodeForBattleRoyale(file)
+      this.gameRunHttpService.runBattleRoyale(file)
         .subscribe({
           next: (dto) => {
             this.gridResultDto.set(dto);

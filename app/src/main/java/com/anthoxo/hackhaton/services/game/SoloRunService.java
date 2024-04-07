@@ -17,18 +17,18 @@ public class SoloRunService {
 
     private final GridService gridService;
     private final FileUtilsService fileUtilsService;
-    private final CodeRunnerService codeRunnerService;
+    private final GameRunnerService gameRunnerService;
     private final GameStatisticsService gameStatisticsService;
 
     public SoloRunService(
             GridService gridService,
             FileUtilsService fileUtilsService,
-            CodeRunnerService codeRunnerService,
+            GameRunnerService gameRunnerService,
             GameStatisticsService gameStatisticsService
     ) {
         this.gridService = gridService;
         this.fileUtilsService = fileUtilsService;
-        this.codeRunnerService = codeRunnerService;
+        this.gameRunnerService = gameRunnerService;
         this.gameStatisticsService = gameStatisticsService;
     }
 
@@ -45,7 +45,7 @@ public class SoloRunService {
         Game game = new Game(List.of(playerOne), initialGrid);
 
         try {
-            codeRunnerService.run(game);
+            gameRunnerService.run(game);
         } finally {
             fileUtilsService.deleteFile(file);
         }

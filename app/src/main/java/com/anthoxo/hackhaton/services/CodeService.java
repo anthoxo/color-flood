@@ -38,7 +38,9 @@ public class CodeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void pushCode(MultipartFile multipartFile, String name,
+    public void pushCode(
+            MultipartFile multipartFile,
+            String name,
             String code) {
         boolean teamNameAlreadyExist = userService.exists(name, code);
         if (!teamNameAlreadyExist) {
@@ -48,11 +50,14 @@ public class CodeService {
         User user = userService.getUser(name, code)
                 .orElseThrow(() -> new IllegalStateException(
                         "User should be created at this step"));
-        File previousFile = new File(user.getCodeFilename());
+        String previousFilename = user.getCodeFilename();
 
         File file = fileUtilsService.generateProductionFile(multipartFile);
         user.setCodeFilename(file.getPath());
         userService.saveUser(user);
-        fileUtilsService.deleteFile(previousFile);
+        if (previousFilename != null) {
+            File previousFile = new File(previousFilename);
+            fileUtilsService.deleteFile(previousFile);
+        }
     }
 }

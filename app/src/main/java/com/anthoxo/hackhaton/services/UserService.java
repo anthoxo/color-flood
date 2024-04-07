@@ -1,13 +1,10 @@
 package com.anthoxo.hackhaton.services;
 
-import com.anthoxo.hackhaton.dtos.UserDto;
 import com.anthoxo.hackhaton.entities.Ladder;
 import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.repositories.LadderRepository;
 import com.anthoxo.hackhaton.repositories.UserRepository;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +20,6 @@ public class UserService {
   ) {
     this.userRepository = userRepository;
     this.ladderRepository = ladderRepository;
-  }
-
-  public List<UserDto> getUsers() {
-    return userRepository.findAll()
-        .stream()
-        .map(UserDto::toDto)
-        .collect(Collectors.toList());
   }
 
   public boolean exists(String name, String password) {

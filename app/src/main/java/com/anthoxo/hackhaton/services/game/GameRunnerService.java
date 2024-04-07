@@ -12,16 +12,16 @@ import java.util.List;
 import java.util.Scanner;
 
 @Service
-public class CodeRunnerService {
+public class GameRunnerService {
 
     public static final String RANDOM_LOCATION = "src/main/resources/examples/RandomExample.java";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(
-            CodeRunnerService.class);
+            GameRunnerService.class);
 
     private final GridService gridService;
 
-    public CodeRunnerService(GridService gridService) {
+    public GameRunnerService(GridService gridService) {
         this.gridService = gridService;
     }
 
