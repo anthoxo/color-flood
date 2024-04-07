@@ -28,7 +28,7 @@ export class ToolbarComponent {
     this.router.navigate(['/battle']);
   }
 
-  goToLadder() {
-    this.router.navigate(['/ladder']);
+  goToUpload() {
+    this.router.navigate(['/upload']);
   }
 }

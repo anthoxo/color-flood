@@ -1,0 +1,13 @@
+<div class="flex flex-col h-full w-full gap-y-8">
+  <div class="flex h-full w-full gap-x-8 items-center">
+    <div class="flex flex-col w-1/2 h-full gap-y-8">
+      <upload-description class="h-full"></upload-description>
+      <upload-form class="h-full" [form]="form"></upload-form>
+    </div>
+    <uploader class="w-1/2" [file]="file()" (onFileChange)="file.set($event)"></uploader>
+  </div>
+  <div class="flex w-full gap-x-2">
+    <button class="w-full" mat-raised-button color="primary" [disabled]="!existFile()" (click)="resetFile()">RESET</button>
+    <button class="w-full" mat-raised-button color="accent" [disabled]="!existFile() || form.invalid" (click)="deployCode()">RUN !!</button>
+  </div>
+</div>
