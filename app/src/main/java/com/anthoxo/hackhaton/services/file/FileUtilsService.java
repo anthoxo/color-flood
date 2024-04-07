@@ -12,11 +12,25 @@ import java.util.UUID;
 @Service
 public class FileUtilsService {
 
+    private static final String TMP_FILE_LOCATION_BUILDER = "src/main/resources/tmp/%s-%s";
+    private static final String PRODUCTION_FILE_LOCATION_BUILDER = "src/main/resources/prod/%s-%s";
+
     public File generateTmpFile(MultipartFile multipartFile) {
-        UUID uuid = UUID.randomUUID();
-        String tmpFilename = String.format("src/main/resources/tmp/%s-%s", uuid,
+        String tmpFilename = String.format(TMP_FILE_LOCATION_BUILDER,
+                UUID.randomUUID(),
                 multipartFile.getOriginalFilename());
-        File file = new File(tmpFilename);
+        return generateFile(multipartFile, tmpFilename);
+    }
+
+    public File generateProductionFile(MultipartFile multipartFile) {
+        String filename = String.format(PRODUCTION_FILE_LOCATION_BUILDER,
+                UUID.randomUUID(),
+                multipartFile.getOriginalFilename());
+        return generateFile(multipartFile, filename);
+    }
+
+    private File generateFile(MultipartFile multipartFile, String path) {
+        File file = new File(path);
         try (OutputStream os = new FileOutputStream(file)) {
             os.write(multipartFile.getBytes());
         } catch (IOException e) {

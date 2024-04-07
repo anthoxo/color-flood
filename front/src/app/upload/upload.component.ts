@@ -62,12 +62,12 @@ export class UploadComponent implements OnInit {
 
     this.codeHttpService.pushCode(file, this.form.controls['name'].value ?? '', this.form.controls['code'].value)
       .subscribe({
-        next: (message) => {
-          this.snackBar.open(message, undefined, { duration: 5000 });
-        },
-        error: ({ error }) => {
-          this.errorUtilsService.displayAsSnack(error);
-        },
+        next: ({ message }) => this.snackBar.open(message, undefined, {
+          duration: 5000,
+          horizontalPosition: 'center',
+          politeness: 'polite'
+        }),
+        error: ({ error }) => this.errorUtilsService.displayAsSnack(error),
       });
   }
 

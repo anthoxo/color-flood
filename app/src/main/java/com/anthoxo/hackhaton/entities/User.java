@@ -31,19 +31,23 @@ public class User {
   @Column(name = "team_name")
   private String teamName;
 
+  @Column(name = "password")
+  private String password;
+
+  @Column(name = "code_filename")
+  private String codeFilename;
+
   @OneToOne(mappedBy = "user")
   @PrimaryKeyJoinColumn
   private Ladder ladder;
 
-  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-  @PrimaryKeyJoinColumn
-  private Code code;
 
   public User() {
   }
 
-  public User(String teamName) {
+  public User(String teamName, String password) {
     this.teamName = teamName;
+    this.password = password;
   }
 
   public Long getId() {
@@ -62,19 +66,27 @@ public class User {
     this.teamName = teamName;
   }
 
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public String getCodeFilename() {
+    return codeFilename;
+  }
+
+  public void setCodeFilename(String codeFilename) {
+    this.codeFilename = codeFilename;
+  }
+
   public Ladder getLadder() {
     return ladder;
   }
 
   public void setLadder(Ladder ladder) {
     this.ladder = ladder;
-  }
-
-  public Code getCode() {
-    return code;
-  }
-
-  public void setCode(Code code) {
-    this.code = code;
   }
 }

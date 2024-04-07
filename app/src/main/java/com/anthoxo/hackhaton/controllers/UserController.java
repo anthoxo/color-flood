@@ -26,7 +26,7 @@ public class UserController {
 
   @PostMapping
   public void createUser(@RequestBody CreateUserDto dto) {
-    userService.createUser(dto.teamName);
+    userService.createUser(dto.teamName, "1234");
   }
 
   private record CreateUserDto(String teamName) {}

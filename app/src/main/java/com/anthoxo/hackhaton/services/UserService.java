@@ -6,6 +6,7 @@ import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.repositories.LadderRepository;
 import com.anthoxo.hackhaton.repositories.UserRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +32,25 @@ public class UserService {
         .collect(Collectors.toList());
   }
 
+  public boolean exists(String name, String password) {
+    return userRepository.existsByTeamNameAndPassword(name, password);
+  }
+
+  public Optional<User> getUser(String name, String password) {
+    return userRepository.findByTeamNameAndPassword(name, password);
+  }
+
+  public void saveUser(User user) {
+    userRepository.save(user);
+  }
+
   @Transactional(rollbackFor = Exception.class)
-  public void createUser(String teamName) {
+  public void createUser(String teamName, String code) {
     if (userRepository.existsByTeamName(teamName)) {
       throw new IllegalArgumentException("Team name exists already.");
     }
 
-    User user = userRepository.save(new User(teamName));
+    User user = userRepository.save(new User(teamName, code));
     Ladder ladder = new Ladder(user);
     user.setLadder(ladder);
     ladderRepository.save(ladder);
