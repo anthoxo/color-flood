@@ -84,4 +84,8 @@ public class SoloRunService {
         SoloRun soloRun = new SoloRun(user, gridEntity, moves);
         soloRunRepository.save(soloRun);
     }
+
+    public List<SoloRun> findAllByGrid(GridEntity grid) {
+        return soloRunRepository.findAllByGrid(grid);
+    }
 }

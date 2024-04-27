@@ -8,6 +8,8 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "ladders")
 public class Ladder {
@@ -22,10 +24,7 @@ public class Ladder {
   private User user;
 
   @Column(name = "elo")
-  private float elo;
-
-  @Column(name = "fight_count")
-  private int fightCount;
+  private double elo;
 
   public Ladder() {
   }
@@ -50,19 +49,42 @@ public class Ladder {
     this.user = user;
   }
 
-  public float getElo() {
+  public double getElo() {
     return elo;
   }
 
-  public void setElo(float elo) {
+  public void setElo(double elo) {
     this.elo = elo;
   }
 
-  public int getFightCount() {
-    return fightCount;
+  public void addChange(double eloChange) {
+    this.elo += eloChange;
   }
 
-  public void setFightCount(int fightCount) {
-    this.fightCount = fightCount;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Ladder ladder = (Ladder) o;
+    return Double.compare(elo, ladder.elo) == 0
+            && Objects.equals(userId, ladder.userId)
+            && Objects.equals(user, ladder.user);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(userId, user, elo);
+  }
+
+  @Override
+  public String toString() {
+    return "Ladder{" +
+            "userId=" + userId +
+            ", elo=" + elo +
+            '}';
   }
 }
