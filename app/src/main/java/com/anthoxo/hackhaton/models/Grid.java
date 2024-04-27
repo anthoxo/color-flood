@@ -1,19 +1,14 @@
 package com.anthoxo.hackhaton.models;
 
+import com.anthoxo.hackhaton.utils.ListUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public record Grid(List<List<Integer>> colors) {
 
     public Grid(Grid grid) {
-        this(new ArrayList<>());
-        for (int i = 0; i < grid.colors.size(); i++) {
-            List<Integer> copy = new ArrayList<>();
-            for (int j = 0; j < grid.colors.get(i).size(); j++) {
-                copy.add(grid.colors.get(i).get(j));
-            }
-            this.colors.add(copy);
-        }
+        this(ListUtils.copy(grid.colors));
     }
 
     public long getNumberOfColors() {
@@ -68,5 +63,15 @@ public record Grid(List<List<Integer>> colors) {
         if (col > 0) {
             color(row, col - 1, previousColor, newColor, passed);
         }
+    }
+
+    public Integer getCurrentColor(StartingTile startingTile) {
+        int size = colors.size();
+        return switch (startingTile) {
+            case TOP_LEFT -> colors().get(0).get(0);
+            case BOTTOM_RIGHT -> colors().get(size - 1).get(size - 1);
+            case BOTTOM_LEFT -> colors().get(size-1).get(0);
+            case TOP_RIGHT -> colors().get(0).get(size-1);
+        };
     }
 }

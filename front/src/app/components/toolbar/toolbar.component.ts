@@ -31,4 +31,8 @@ export class ToolbarComponent {
   goToUpload() {
     this.router.navigate(['/upload']);
   }
+
+  goToContest() {
+    this.router.navigate(['/contest']);
+  }
 }

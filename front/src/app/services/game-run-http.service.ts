@@ -23,4 +23,8 @@ export class GameRunHttpService {
     formData.append('file', file);
     return this.http.post<GridResultDto>('http://localhost:8080/api/game/run/battle', formData);
   }
+
+  runContest() {
+    return this.http.post<void>('http://localhost:8080/api/game/run/contest', null);
+  }
 }

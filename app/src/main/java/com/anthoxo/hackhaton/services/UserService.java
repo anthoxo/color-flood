@@ -4,6 +4,8 @@ import com.anthoxo.hackhaton.entities.Ladder;
 import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.repositories.LadderRepository;
 import com.anthoxo.hackhaton.repositories.UserRepository;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,10 @@ public class UserService {
 
   public Optional<User> getUser(String name, String password) {
     return userRepository.findByTeamNameAndPassword(name, password);
+  }
+
+  public List<User> getAll() {
+    return userRepository.findAll();
   }
 
   public void saveUser(User user) {
