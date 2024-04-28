@@ -17,15 +17,12 @@ public class EloService {
     }
 
     public void computeElo(List<SoloRun> soloRuns) {
-        List<SoloRun> sortedSoloRuns = soloRuns
-                .stream()
-                .toList();
         for (int i = 0; i < soloRuns.size(); i++) {
-            SoloRun soloRun1 = sortedSoloRuns.get(i);
+            SoloRun soloRun1 = soloRuns.get(i);
             Ladder ladder1 = ladderRepository.findByUser(soloRun1.getUser())
                     .orElseGet(() -> new Ladder(soloRun1.getUser()));
             for (int j = i + 1; j < soloRuns.size(); j++) {
-                SoloRun soloRun2 = sortedSoloRuns.get(j);
+                SoloRun soloRun2 = soloRuns.get(j);
                 Ladder ladder2 = ladderRepository.findByUser(soloRun2.getUser())
                         .orElseGet(() -> new Ladder(soloRun2.getUser()));
                 double elo1 = computeElo(
@@ -44,7 +41,6 @@ public class EloService {
                 ladder2.addChange(elo2);
                 ladderRepository.save(ladder1);
                 ladderRepository.save(ladder2);
-
             }
         }
     }

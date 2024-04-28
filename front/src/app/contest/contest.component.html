@@ -1,3 +1,27 @@
-<div class="flex w-full gap-x-2">
-  <button class="w-full" mat-raised-button color="primary" (click)="runContest()">RUN</button>
+<div class="flex h-full w-full">
+  <mat-card class="h-full">
+    <mat-card-header>
+      <mat-card-title>Ladder</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        @for (user of userDtos(); track user.id) {
+          <mat-list-item>
+            <span matListItemTitle>{{ user.teamName }}</span>
+            <span matListItemLine>{{ user.elo }}</span>
+          </mat-list-item>
+        }
+          <mat-list-item>
+            <button class="w-full" mat-raised-button color="primary" (click)="runContest()">RUN</button>
+          </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+  <div>
+    test
+  </div>
+  <div>
+    test
+  </div>
 </div>
+
