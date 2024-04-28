@@ -1,6 +1,6 @@
 package com.anthoxo.hackhaton.services.contest;
 
-import com.anthoxo.hackhaton.dtos.GridResultDto;
+
 import com.anthoxo.hackhaton.entities.GridEntity;
 import com.anthoxo.hackhaton.entities.SoloRun;
 import com.anthoxo.hackhaton.entities.User;
@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Service
 public class SoloContestService {
@@ -33,29 +34,23 @@ public class SoloContestService {
         gridEntities.forEach(gridEntity -> {
             users.forEach(user -> {
                 Grid grid = new Grid(ListUtils.copy(gridEntity.getGrid()));
-                GridResultDto gridResultDto;
+                List<String> moves;
                 try {
-                    gridResultDto = soloRunService.run(user, grid);
+                    moves = soloRunService.run(user, grid)
+                            .history()
+                            .stream()
+                            .skip(1)
+                            .map(hist -> hist.getCurrentColor(StartingTile.TOP_LEFT))
+                            .map(String::valueOf)
+                            .toList();
                 } catch (Exception ex) {
                     LOGGER.error(
                             "Something happen during the running, move set to 300.");
-                    gridResultDto = new GridResultDto(
-                            List.of(),
-                            List.of(new GridResultDto.Statistic(
-                                    user.getId().toString(),
-                                    1,
-                                    -1,
-                                    0,
-                                    StartingTile.TOP_LEFT
-                            ))
-                    );
+                    moves = IntStream.range(0, 300)
+                            .mapToObj(i -> 1)
+                            .map(String::valueOf)
+                            .toList();
                 }
-
-                List<String> moves = gridResultDto.history().stream()
-                        .skip(1)
-                        .map(hist -> hist.getCurrentColor(StartingTile.TOP_LEFT))
-                        .map(String::valueOf)
-                        .toList();
 
                 soloRunService.save(user, gridEntity, moves);
             });
