@@ -8,6 +8,7 @@ public final class Player {
     private final StartingTile startingTile;
     private final String pathFile;
     private int currentColor;
+    private boolean isGameOver = false;
 
     public Player(String name, StartingTile startingTile, String pathFile) {
         this.name = name;
@@ -33,6 +34,14 @@ public final class Player {
 
     public String pathFile() {
         return pathFile;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
     }
 
     @Override

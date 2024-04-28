@@ -1,6 +1,7 @@
 package com.anthoxo.hackhaton.services.game;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
+import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Game;
 import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.Player;
@@ -32,7 +33,7 @@ public class BattleRoyaleRunService {
     }
 
     public GridResultDto runAlone(MultipartFile multipartFile)
-            throws IOException, InterruptedException {
+            throws GameCancelledException {
         File file = fileUtilsService.generateTmpFile(multipartFile);
 
         Grid initialGrid = gridService.init(6);

@@ -1,6 +1,8 @@
 package com.anthoxo.hackhaton.services.game;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
+import com.anthoxo.hackhaton.entities.User;
+import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Game;
 import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.Player;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public class DuelRunService {
     }
 
     public GridResultDto runWithRandom(MultipartFile multipartFile)
-            throws IOException, InterruptedException {
+            throws GameCancelledException {
         File file = fileUtilsService.generateTmpFile(multipartFile);
 
         Grid initialGrid = gridService.init(4);
@@ -54,6 +55,26 @@ public class DuelRunService {
             fileUtilsService.deleteFile(file);
         }
 
+        return new GridResultDto(
+                game.getHistory(),
+                gameStatisticsService.getStatistics(game)
+        );
+    }
+
+    public GridResultDto run(User user1, User user2, Grid grid)
+            throws GameCancelledException {
+        Player playerOne = new Player(
+                user1.getId().toString(),
+                StartingTile.TOP_LEFT,
+                user1.getCodeFilename()
+        );
+        Player playerTwo = new Player(
+                user2.getId().toString(),
+                StartingTile.BOTTOM_RIGHT,
+                user2.getCodeFilename()
+        );
+        Game game = new Game(List.of(playerOne, playerTwo), grid);
+        gameRunnerService.run(game);
         return new GridResultDto(
                 game.getHistory(),
                 gameStatisticsService.getStatistics(game)

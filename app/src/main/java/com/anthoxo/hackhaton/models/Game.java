@@ -25,13 +25,26 @@ public final class Game {
     }
 
     public void run(int turn, int newColor) {
-        Player currentPlayer = players.get(turn % players.size());
+        Player currentPlayer = getCurrentPlayer(turn);
+        if (currentPlayer.isGameOver()) {
+            history.add(new Grid(grid));
+            return;
+        }
         if (players.stream().map(player -> player.currentColor(grid))
                 .noneMatch(color -> color == newColor)) {
             grid.color(currentPlayer.startingTile(),
                     currentPlayer.currentColor(grid), newColor);
         }
         history.add(new Grid(grid));
+    }
+
+    public Player getCurrentPlayer(int turn) {
+        return players.get(turn % players.size());
+    }
+
+    public void gameOver(int turn) {
+        Player currentPlayer = getCurrentPlayer(turn);
+        currentPlayer.setGameOver(true);
     }
 
     public boolean isFinished() {

@@ -4,6 +4,7 @@ import com.anthoxo.hackhaton.dtos.GridResultDto;
 import com.anthoxo.hackhaton.entities.GridEntity;
 import com.anthoxo.hackhaton.entities.SoloRun;
 import com.anthoxo.hackhaton.entities.User;
+import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Game;
 import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.Player;
@@ -40,7 +41,7 @@ public class SoloRunService {
     }
 
     public GridResultDto run(MultipartFile multipartFile)
-            throws IOException, InterruptedException {
+            throws GameCancelledException {
         File file = fileUtilsService.generateTmpFile(multipartFile);
 
         Grid initialGrid = gridService.init(2);
@@ -63,13 +64,11 @@ public class SoloRunService {
         );
     }
 
-    public GridResultDto run(User user, Grid grid)
-            throws InterruptedException, IOException {
-        File file = new File(user.getCodeFilename());
+    public GridResultDto run(User user, Grid grid) throws GameCancelledException {
         Player playerOne = new Player(
                 user.getId().toString(),
                 StartingTile.TOP_LEFT,
-                file.getPath()
+                user.getCodeFilename()
         );
         Game game = new Game(List.of(playerOne), grid);
         gameRunnerService.run(game);

@@ -1,5 +1,6 @@
 package com.anthoxo.hackhaton.services.game;
 
+import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Game;
 import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.Player;
@@ -25,8 +26,7 @@ public class GameRunnerService {
         this.gridService = gridService;
     }
 
-    public void run(Game game)
-            throws IOException, InterruptedException {
+    public void run(Game game) throws GameCancelledException {
         List<Process> processes = game.getPlayers().stream()
                 .map(player -> {
                     ProcessBuilder processBuilder = new ProcessBuilder("java",
@@ -43,42 +43,63 @@ public class GameRunnerService {
 
         int size = game.getSize();
         int numberOfPlayers = game.getPlayers().size();
-        for (Process process : processes) {
-            write(process, String.valueOf(size));
-            write(process, String.valueOf(numberOfPlayers));
+        try {
+            for (Process process : processes) {
+                write(process, String.valueOf(size));
+                write(process, String.valueOf(numberOfPlayers));
+            }
+        } catch (IOException ioException) {
+            throw new GameCancelledException(ioException);
         }
 
         int turn = 0;
         do {
+            Player player = game.getCurrentPlayer(turn);
+            if (player.isGameOver()) {
+                turn++;
+                continue;
+            }
             Process process = processes.get(turn % game.getPlayers().size());
-            Player player = game.getPlayers().get(turn % game.getPlayers().size());
             Scanner scanner = new Scanner(process.getInputStream());
             Grid rotatedGrid = gridService.rotateGridIfNeeded(game.getGrid(),
                     player.startingTile());
             List<String> lines = gridService.getFormatGridForProgram(
                     rotatedGrid);
-            for (String line : lines) {
-                write(process, line);
+            try {
+                for (String line : lines) {
+                    write(process, line);
+                }
+            } catch (IOException ioException) {
+                LOGGER.error("Error occurs when writing the grid. player={}, ex={}", player, ioException);
+                game.gameOver(turn);
+                turn++;
+                continue;
             }
             try {
                 String answer = scanner.nextLine();
                 Integer res = Integer.valueOf(answer);
                 game.run(turn, res);
             } catch (Exception ex) {
-                LOGGER.error(ex.getMessage(), ex);
-                // handle exception here?
-                break;
+                LOGGER.error("Something happens for the player={}, ex={}", game.getCurrentPlayer(turn), ex);
+                game.gameOver(turn);
             }
             if (game.isFinished()) {
                 break;
             }
+            LOGGER.info("player={}, isOver={}", player, player.isGameOver());
             ++turn;
         } while (turn < 200);
 
         for (Process process : processes) {
-            process.outputWriter().close();
-            process.destroy();
-            int exitCode = process.waitFor();
+            try {
+                process.outputWriter().close();
+                process.destroy();
+                process.waitFor();
+            } catch (IOException ioException) {
+                LOGGER.warn("error when closing the process");
+            } catch (InterruptedException interruptedException) {
+                throw new IllegalStateException("should be exit before interrupted");
+            }
         }
     }
 

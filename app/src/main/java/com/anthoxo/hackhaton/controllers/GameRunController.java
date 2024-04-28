@@ -1,6 +1,7 @@
 package com.anthoxo.hackhaton.controllers;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
+import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.services.file.FileCheckerService;
 import com.anthoxo.hackhaton.services.game.BattleRoyaleRunService;
 import com.anthoxo.hackhaton.services.contest.ContestService;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/game/run")
@@ -39,14 +38,14 @@ public class GameRunController {
 
     @PostMapping("/solo")
     public GridResultDto runSolo(@RequestParam("file") MultipartFile file)
-            throws IOException, InterruptedException {
+            throws GameCancelledException {
         fileCheckerService.checkFileExtension(file);
         return soloRunService.run(file);
     }
 
     @PostMapping("/versus")
     public GridResultDto runVersus(@RequestParam("file") MultipartFile file)
-            throws IOException, InterruptedException {
+            throws GameCancelledException {
         fileCheckerService.checkFileExtension(file);
         return duelRunService.runWithRandom(file);
     }
@@ -54,7 +53,7 @@ public class GameRunController {
     @PostMapping("/battle")
     public GridResultDto runBattleRoyale(
             @RequestParam("file") MultipartFile file)
-            throws IOException, InterruptedException {
+            throws GameCancelledException {
         fileCheckerService.checkFileExtension(file);
         return battleRoyaleRunService.runAlone(file);
     }

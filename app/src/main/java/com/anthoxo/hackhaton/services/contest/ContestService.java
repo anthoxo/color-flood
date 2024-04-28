@@ -20,15 +20,18 @@ public class ContestService {
     private final GridRepository gridRepository;
     private final UserService userService;
     private final SoloContestService soloContestService;
+    private final VersusContestService versusContestService;
 
     public ContestService(GridService gridService,
             GridRepository gridRepository,
             UserService userService,
-            SoloContestService soloContestService) {
+            SoloContestService soloContestService,
+            VersusContestService versusContestService) {
         this.gridService = gridService;
         this.gridRepository = gridRepository;
         this.userService = userService;
         this.soloContestService = soloContestService;
+        this.versusContestService = versusContestService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -39,11 +42,9 @@ public class ContestService {
         List<GridEntity> gridEntities = gridRepository.findAll();
         List<User> users = userService.getAll();
 
-        Collections.shuffle(gridEntities);
-        soloContestService.run(users, gridEntities
-                .stream()
-                .limit(10)
-                .toList());
+//        runForSolo(users, gridEntities);
+        runForVersus(users, gridEntities);
+
     }
 
     private void initGrids() {
@@ -55,5 +56,18 @@ public class ContestService {
             GridEntity gridEntity = new GridEntity(grid.colors());
             gridRepository.save(gridEntity);
         }
+    }
+
+    private void runForSolo(List<User> users, List<GridEntity> gridEntities) {
+        Collections.shuffle(gridEntities);
+        soloContestService.run(users, gridEntities
+                .stream()
+                .limit(10)
+                .toList());
+    }
+
+    private void runForVersus(List<User> users, List<GridEntity> gridEntities) {
+        Collections.shuffle(gridEntities);
+        versusContestService.run(users, gridEntities);
     }
 }

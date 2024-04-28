@@ -4,6 +4,7 @@ package com.anthoxo.hackhaton.services.contest;
 import com.anthoxo.hackhaton.entities.GridEntity;
 import com.anthoxo.hackhaton.entities.SoloRun;
 import com.anthoxo.hackhaton.entities.User;
+import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.StartingTile;
 import com.anthoxo.hackhaton.services.game.SoloRunService;
@@ -43,9 +44,9 @@ public class SoloContestService {
                             .map(hist -> hist.getCurrentColor(StartingTile.TOP_LEFT))
                             .map(String::valueOf)
                             .toList();
-                } catch (Exception ex) {
+                } catch (GameCancelledException ex) {
                     LOGGER.error(
-                            "Something happen during the running, move set to 300.");
+                            "Something happen during the running, move set to 300.", ex);
                     moves = IntStream.range(0, 300)
                             .mapToObj(i -> 1)
                             .map(String::valueOf)
