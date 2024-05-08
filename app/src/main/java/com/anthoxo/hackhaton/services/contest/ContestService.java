@@ -21,17 +21,20 @@ public class ContestService {
     private final UserService userService;
     private final SoloContestService soloContestService;
     private final VersusContestService versusContestService;
+    private final BattleRoyaleContestService battleRoyaleContestService;
 
     public ContestService(GridService gridService,
             GridRepository gridRepository,
             UserService userService,
             SoloContestService soloContestService,
-            VersusContestService versusContestService) {
+            VersusContestService versusContestService,
+        BattleRoyaleContestService battleRoyaleContestService) {
         this.gridService = gridService;
         this.gridRepository = gridRepository;
         this.userService = userService;
         this.soloContestService = soloContestService;
         this.versusContestService = versusContestService;
+        this.battleRoyaleContestService = battleRoyaleContestService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -42,9 +45,9 @@ public class ContestService {
         List<GridEntity> gridEntities = gridRepository.findAll();
         List<User> users = userService.getAll();
 
-//        runForSolo(users, gridEntities);
+        runForSolo(users, gridEntities);
         runForVersus(users, gridEntities);
-
+        runForBattleRoyale(users, gridEntities);
     }
 
     private void initGrids() {
@@ -69,5 +72,10 @@ public class ContestService {
     private void runForVersus(List<User> users, List<GridEntity> gridEntities) {
         Collections.shuffle(gridEntities);
         versusContestService.run(users, gridEntities);
+    }
+
+    private void runForBattleRoyale(List<User> users, List<GridEntity> gridEntities) {
+        Collections.shuffle(gridEntities);
+        battleRoyaleContestService.run(users, gridEntities);
     }
 }

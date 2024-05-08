@@ -1,6 +1,7 @@
 package com.anthoxo.hackhaton.services.game;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
+import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Game;
 import com.anthoxo.hackhaton.models.Grid;
@@ -68,6 +69,36 @@ public class BattleRoyaleRunService {
         return new GridResultDto(
                 game.getHistory(),
                 gameStatisticsService.getStatistics(game)
+        );
+    }
+
+    public GridResultDto run(User user1, User user2, User user3, User user4, Grid grid)
+        throws GameCancelledException {
+        Player playerOne = new Player(
+            user1.getId().toString(),
+            StartingTile.TOP_LEFT,
+            user1.getCodeFilename()
+        );
+        Player playerTwo = new Player(
+            user2.getId().toString(),
+            StartingTile.BOTTOM_RIGHT,
+            user2.getCodeFilename()
+        );
+        Player playerThree = new Player(
+            user3.getId().toString(),
+            StartingTile.TOP_RIGHT,
+            user3.getCodeFilename()
+        );
+        Player playerFour = new Player(
+            user4.getId().toString(),
+            StartingTile.BOTTOM_LEFT,
+            user4.getCodeFilename()
+        );
+        Game game = new Game(List.of(playerOne, playerTwo, playerThree, playerFour), grid);
+        gameRunnerService.run(game);
+        return new GridResultDto(
+            game.getHistory(),
+            gameStatisticsService.getStatistics(game)
         );
     }
 }

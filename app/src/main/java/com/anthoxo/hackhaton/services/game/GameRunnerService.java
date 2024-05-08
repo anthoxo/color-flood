@@ -86,7 +86,6 @@ public class GameRunnerService {
             if (game.isFinished()) {
                 break;
             }
-            LOGGER.info("player={}, isOver={}", player, player.isGameOver());
             ++turn;
         } while (turn < 200);
 

@@ -9,6 +9,7 @@ import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.StartingTile;
 import com.anthoxo.hackhaton.repositories.VersusRunRepository;
 import com.anthoxo.hackhaton.services.game.DuelRunService;
+import com.anthoxo.hackhaton.services.ladder.EloService;
 import com.anthoxo.hackhaton.utils.ListUtils;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,13 @@ public class VersusContestService {
 
     private final DuelRunService duelRunService;
     private final VersusRunRepository versusRunRepository;
+    private final EloService eloService;
 
     public VersusContestService(DuelRunService duelRunService,
-            VersusRunRepository versusRunRepository) {
+            VersusRunRepository versusRunRepository, EloService eloService) {
         this.duelRunService = duelRunService;
         this.versusRunRepository = versusRunRepository;
+        this.eloService = eloService;
     }
 
     public void run(List<User> users, List<GridEntity> gridEntities) {
@@ -57,14 +60,16 @@ public class VersusContestService {
                     user2,
                     moves1
             );
+            versusRunRepository.save(versusRun1);
+            eloService.computeElo(versusRun1);
             VersusRun versusRun2 = new VersusRun(
                     gridEntity,
                     user2,
                     user1,
                     moves2
             );
-            versusRunRepository.save(versusRun1);
             versusRunRepository.save(versusRun2);
+            eloService.computeElo(versusRun2);
         } catch (GameCancelledException gameCancelledException) {
             // handle loss for both players
         }
