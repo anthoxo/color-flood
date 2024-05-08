@@ -88,7 +88,13 @@ public class BattleContestService {
             eloService.computeElo(battleRun);
 
         } catch (GameCancelledException gameCancelledException) {
-            // handle loss for both players
+            BattleRun battleRun = new BattleRun(
+                gridEntity,
+                user1, user2, user3, user4,
+                List.of("0")
+            );
+            battleRunRepository.save(battleRun);
+            eloService.computeLossElo(battleRun);
         }
     }
 }

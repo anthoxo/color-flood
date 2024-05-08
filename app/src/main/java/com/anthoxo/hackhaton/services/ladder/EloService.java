@@ -66,7 +66,7 @@ public class EloService {
                 versusRun
             )
             .statistics();
-        computeElo(statistics, (tile) -> switch (tile) {
+        computeElo(statistics, tile -> switch (tile) {
             case TOP_LEFT -> versusRun.getTopLeftUser();
             case BOTTOM_RIGHT -> versusRun.getBottomRightUser();
             case TOP_RIGHT, BOTTOM_LEFT -> throw new IllegalStateException(
@@ -79,7 +79,33 @@ public class EloService {
             battleRun
         ).statistics();
 
-        computeElo(statistics, (tile) -> switch (tile) {
+        computeElo(statistics, tile -> switch (tile) {
+            case TOP_LEFT -> battleRun.getTopLeftUser();
+            case BOTTOM_RIGHT -> battleRun.getBottomRightUser();
+            case TOP_RIGHT -> battleRun.getTopRightUser();
+            case BOTTOM_LEFT -> battleRun.getBottomLeftUser();
+        });
+    }
+
+    public void computeLossElo(VersusRun versusRun) {
+        List<GridResultDto.Statistic> statistics = gameResolverService.resolve(
+                versusRun
+            )
+            .statistics();
+        computeLossElo(statistics, tile -> switch (tile) {
+            case TOP_LEFT -> versusRun.getTopLeftUser();
+            case BOTTOM_RIGHT -> versusRun.getBottomRightUser();
+            case TOP_RIGHT, BOTTOM_LEFT -> throw new IllegalStateException(
+                "VersusRun should not start TOP_RIGHT | BOTTOM_LEFT");
+        });
+    }
+
+    public void computeLossElo(BattleRun battleRun) {
+        List<GridResultDto.Statistic> statistics = gameResolverService.resolve(
+            battleRun
+        ).statistics();
+
+        computeLossElo(statistics, tile -> switch (tile) {
             case TOP_LEFT -> battleRun.getTopLeftUser();
             case BOTTOM_RIGHT -> battleRun.getBottomRightUser();
             case TOP_RIGHT -> battleRun.getTopRightUser();
@@ -121,7 +147,46 @@ public class EloService {
                 ladderRepository.save(ladder2);
             }
         }
+    }
 
+    private void computeLossElo(
+        List<GridResultDto.Statistic> statistics,
+        Function<StartingTile, User> getUserByStartingTile
+    ) {
+        for (int i = 0; i < statistics.size(); i++) {
+            GridResultDto.Statistic stat1 = statistics.get(i);
+            User user1 = getUserByStartingTile.apply(stat1.startingTile());
+            Ladder ladder1 = ladderRepository.findByUser(user1)
+                .orElseGet(() -> new Ladder(user1));
+
+            for (int j = i + 1; j < statistics.size(); j++) {
+                GridResultDto.Statistic stat2 = statistics.get(j);
+                User user2 = getUserByStartingTile.apply(stat2.startingTile());
+                Ladder ladder2 = ladderRepository.findByUser(user2)
+                    .orElseGet(() -> new Ladder(user2));
+
+                double elo1 = computeElo(
+                    stat1.rank(),
+                    ladder1.getElo(),
+                    false,
+                    stat2.rank(),
+                    ladder2.getElo(),
+                    false
+                );
+                double elo2 = computeElo(
+                    stat2.rank(),
+                    ladder2.getElo(),
+                    false,
+                    stat1.rank(),
+                    ladder1.getElo(),
+                    false
+                );
+                ladder1.addChange(elo1);
+                ladder2.addChange(elo2);
+                ladderRepository.save(ladder1);
+                ladderRepository.save(ladder2);
+            }
+        }
     }
 
     private double computeElo(
@@ -157,12 +222,8 @@ public class EloService {
     }
 
     private boolean hasFinished(SoloRun soloRun) {
-        Grid grid = new Grid(soloRun.getGrid());
-        for (int i = 0; i < soloRun.getMoves().size(); i++) {
-            grid.color(StartingTile.TOP_LEFT,
-                grid.getCurrentColor(StartingTile.TOP_LEFT),
-                Integer.valueOf(soloRun.getMoves().get(i)));
-        }
-        return grid.getNumberOfColors() == 1;
+        List<Grid> history = gameResolverService.resolve(soloRun).history();
+        return !history.isEmpty() &&
+            history.get(history.size() - 1).getNumberOfColors() == 1;
     }
 }

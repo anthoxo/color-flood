@@ -71,7 +71,14 @@ public class VersusContestService {
             versusRunRepository.save(versusRun);
             eloService.computeElo(versusRun);
         } catch (GameCancelledException gameCancelledException) {
-            // handle loss for both players
+            VersusRun versusRun = new VersusRun(
+                gridEntity,
+                user1,
+                user2,
+                List.of()
+            );
+            versusRunRepository.save(versusRun);
+            eloService.computeLossElo(versusRun);
         }
     }
 }

@@ -57,6 +57,7 @@ public class GameRunnerService {
             Player player = game.getCurrentPlayer(turn);
             if (player.isGameOver()) {
                 turn++;
+                game.saveHistory();
                 continue;
             }
             Process process = processes.get(turn % game.getPlayers().size());

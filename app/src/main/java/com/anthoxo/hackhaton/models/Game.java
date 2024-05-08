@@ -24,10 +24,13 @@ public final class Game {
         return players;
     }
 
+    public void saveHistory() {
+        history.add(new Grid(grid));
+    }
+
     public void run(int turn, int newColor) {
         Player currentPlayer = getCurrentPlayer(turn);
         if (currentPlayer.isGameOver()) {
-            history.add(new Grid(grid));
             return;
         }
         if (players.stream().map(player -> player.currentColor(grid))
@@ -45,6 +48,7 @@ public final class Game {
     public void gameOver(int turn) {
         Player currentPlayer = getCurrentPlayer(turn);
         currentPlayer.setGameOver(true);
+        history.add(new Grid(grid));
     }
 
     public boolean isFinished() {
