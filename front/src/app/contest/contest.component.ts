@@ -1,5 +1,4 @@
-import { Component, HostBinding, Signal } from '@angular/core';
-import { CodeHttpService } from '../services/code-http.service';
+import { Component, effect, HostBinding, signal, Signal, WritableSignal } from '@angular/core';
 import { GameRunHttpService } from '../services/game-run-http.service';
 import { MatButton } from '@angular/material/button';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -7,6 +6,17 @@ import { LadderHttpService } from '../services/ladder-http.service';
 import { UserDto } from '../models/user.model';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatList, MatListItem, MatListItemLine, MatListItemTitle } from '@angular/material/list';
+import { DecimalPipe } from '@angular/common';
+import { GameHttpService } from '../services/game-http.service';
+import { GameOverviewDto } from '../models/game-overview.model';
+import { GridRunnerComponent } from '../components/grid-runner/grid-runner.component';
+import { GridRunnerStatisticsComponent } from '../components/grid-runner-statistics/grid-runner-statistics.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { RandomGridComponent } from '../components/random-grid/random-grid.component';
+import { UploaderComponent } from '../components/uploader/uploader.component';
+import { VersusRuleComponent } from '../versus/rule/versus-rule.component';
+import { ContestSelectComponent } from './select/contest-select.component';
+import { GridResultDto } from '../models/grid.model';
 
 @Component({
   selector: 'contest',
@@ -21,7 +31,15 @@ import { MatList, MatListItem, MatListItemLine, MatListItemTitle } from '@angula
     MatList,
     MatListItem,
     MatListItemLine,
-    MatListItemTitle
+    MatListItemTitle,
+    DecimalPipe,
+    GridRunnerComponent,
+    GridRunnerStatisticsComponent,
+    MatProgressSpinner,
+    RandomGridComponent,
+    UploaderComponent,
+    VersusRuleComponent,
+    ContestSelectComponent
   ]
 })
 export class ContestComponent {
@@ -30,9 +48,38 @@ export class ContestComponent {
 
   userDtos: Signal<UserDto[]> = toSignal(this.ladderHttpService.getLadder(), { initialValue: [] });
 
-  constructor(private gameRunHttpService: GameRunHttpService, private ladderHttpService: LadderHttpService) {}
+  gameOverview: Signal<GameOverviewDto> = toSignal(this.gameHttpService.getAll(), {
+    initialValue: {
+      soloGames: [],
+      versusGames: [],
+      battleGames: []
+    }
+  });
+  loading = signal<boolean>(false);
+  gridResultDto = signal<GridResultDto | undefined>(undefined);
+
+  constructor(private gameRunHttpService: GameRunHttpService,
+              private ladderHttpService: LadderHttpService,
+              private gameHttpService: GameHttpService) {
+  }
 
   runContest() {
     this.gameRunHttpService.runContest().subscribe(() => console.log('yes!'));
+  }
+
+  onSelectGame(choice: { gameId: number; mode: 'SOLO' | 'VERSUS' | 'BATTLE' }) {
+    this.loading.set(true);
+    this.gameHttpService.getDetail(choice.mode, choice.gameId)
+      .subscribe({
+        next: (gridResultDto) => {
+          this.gridResultDto.set(gridResultDto);
+          this.loading.set(false);
+        },
+        error: (e) => {
+          console.log('error', e);
+          this.gridResultDto.set(undefined);
+          this.loading.set(false);
+        }
+      });
   }
 }

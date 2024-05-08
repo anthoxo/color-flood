@@ -1,0 +1,15 @@
+<div class="h-full flex flex-col overflow-y-hidden">
+  <mat-button-toggle-group hideSingleSelectionIndicator>
+    <mat-button-toggle value="SOLO" (click)="mode.set('SOLO')">Solo</mat-button-toggle>
+    <mat-button-toggle value="VERSUS" (click)="mode.set('VERSUS')">Versus</mat-button-toggle>
+    <mat-button-toggle value="BATTLE" (click)="mode.set('BATTLE')">Battle</mat-button-toggle>
+  </mat-button-toggle-group>
+  <mat-list class="h-full overflow-y-auto">
+    @for (game of games(); track game.id) {
+      <mat-list-item [activated]="game.id === selectedGame()" (click)="select(game.id)">
+        <span class="text-xs text-wrap">{{ game.players.join(' ⚡️ ') }}</span>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    }
+  </mat-list>
+</div>

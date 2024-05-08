@@ -9,7 +9,7 @@ import java.util.List;
 
 @Table
 @Entity(name = "solo_runs")
-public class SoloRun {
+public class SoloRun implements Run {
     @Id
     @GeneratedValue(generator = "solo-run-generator")
     @GenericGenerator(
@@ -47,6 +47,11 @@ public class SoloRun {
 
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return List.of(user);
     }
 
     public void setId(Long id) {

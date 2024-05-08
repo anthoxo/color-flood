@@ -44,6 +44,7 @@ public class HackathonSecurityConfig {
                 .requestMatchers(
                     mvcMatcherBuilder.pattern("/api/users"),
                     mvcMatcherBuilder.pattern("/api/codes/**"),
+                    mvcMatcherBuilder.pattern("/api/game/**"),
                     mvcMatcherBuilder.pattern("/api/game/run/**"),
                     mvcMatcherBuilder.pattern("/api/ladder/**")
                 )

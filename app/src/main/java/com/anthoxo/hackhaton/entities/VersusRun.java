@@ -9,7 +9,7 @@ import java.util.List;
 
 @Table
 @Entity(name = "versus_runs")
-public class VersusRun {
+public class VersusRun implements Run {
 
     @Id
     @GeneratedValue(generator = "versus-run-generator")
@@ -57,6 +57,11 @@ public class VersusRun {
 
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return List.of(topLeftUser, bottomRightUser);
     }
 
     public void setId(Long id) {

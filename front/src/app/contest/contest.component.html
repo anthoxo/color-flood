@@ -1,27 +1,43 @@
-<div class="flex h-full w-full">
-  <mat-card class="h-full">
-    <mat-card-header>
-      <mat-card-title>Ladder</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-list>
-        @for (user of userDtos(); track user.id) {
-          <mat-list-item>
-            <span matListItemTitle>{{ user.teamName }}</span>
-            <span matListItemLine>{{ user.elo }}</span>
-          </mat-list-item>
-        }
+<div class="flex h-full w-full gap-x-8">
+  <div class="lg:w-1/3 w-1/2 h-full flex flex-row justify-between">
+    <mat-card class="max-h-[90vh] w-1/2">
+      <mat-card-header>
+        <mat-card-title>Ladder</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="overflow-y-auto">
+        <mat-list>
+          @for (user of userDtos(); track user.id) {
+            <mat-list-item>
+              <span matListItemTitle>{{ user.teamName }}</span>
+              <span matListItemLine>{{ user.elo | number }}</span>
+            </mat-list-item>
+          }
           <mat-list-item>
             <button class="w-full" mat-raised-button color="primary" (click)="runContest()">RUN</button>
           </mat-list-item>
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
-  <div>
-    test
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+    <contest-select
+      class="max-h-[90vh] w-1/2"
+      [overview]="gameOverview()"
+      (selectGame)="onSelectGame($event)"
+    ></contest-select>
   </div>
-  <div>
-    test
+  <div class="lg:w-1/3 w-0">
+    @if (gridResultDto() !== undefined) {
+      <grid-runner-statistics [gridResultDto]="gridResultDto()"></grid-runner-statistics>
+    }
+  </div>
+  <div class="lg:w-1/3 w-1/2 flex justify-center items-center">
+    @if (loading()) {
+      <mat-spinner></mat-spinner>
+    } @else if (gridResultDto() !== undefined)  {
+      <grid-runner class="w-full h-full" [gridResultDto]="gridResultDto()"></grid-runner>
+    } @else {
+      <random-grid class="w-full h-full"></random-grid>
+    }
   </div>
 </div>
+
 
