@@ -6,6 +6,8 @@ import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.repositories.GridRepository;
 import com.anthoxo.hackhaton.services.UserService;
 import com.anthoxo.hackhaton.services.game.GridService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import java.util.List;
 @Service
 public class ContestService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContestService.class);
 
     private final GridService gridService;
     private final GridRepository gridRepository;
@@ -39,7 +42,7 @@ public class ContestService {
 
     @Transactional(rollbackFor = Exception.class)
     public void runContest() {
-
+        LOGGER.info("Start computing contest!!");
         initGrids();
 
         List<GridEntity> gridEntities = gridRepository.findAll();
@@ -48,6 +51,7 @@ public class ContestService {
         runForSolo(users, gridEntities);
         runForVersus(users, gridEntities);
         runForBattleRoyale(users, gridEntities);
+        LOGGER.info("End computing contest!!");
     }
 
     private void initGrids() {

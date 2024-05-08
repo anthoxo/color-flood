@@ -2,12 +2,10 @@ package com.anthoxo.hackhaton.services.ladder;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
 import com.anthoxo.hackhaton.entities.*;
-import com.anthoxo.hackhaton.models.Game;
 import com.anthoxo.hackhaton.models.Grid;
-import com.anthoxo.hackhaton.models.Player;
 import com.anthoxo.hackhaton.models.StartingTile;
 import com.anthoxo.hackhaton.repositories.LadderRepository;
-import com.anthoxo.hackhaton.services.game.GameStatisticsService;
+import com.anthoxo.hackhaton.services.game.GameResolverService;
 import com.anthoxo.hackhaton.utils.ListUtils;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +15,14 @@ import java.util.List;
 public class EloService {
 
     private final LadderRepository ladderRepository;
-    private final GameStatisticsService gameStatisticsService;
+    private final GameResolverService gameResolverService;
 
-    public EloService(LadderRepository ladderRepository,
-        GameStatisticsService gameStatisticsService) {
+    public EloService(
+        LadderRepository ladderRepository,
+        GameResolverService gameResolverService
+    ) {
         this.ladderRepository = ladderRepository;
-        this.gameStatisticsService = gameStatisticsService;
+        this.gameResolverService = gameResolverService;
     }
 
     public void computeElo(List<SoloRun> soloRuns) {
@@ -62,32 +62,17 @@ public class EloService {
     }
 
     public void computeElo(VersusRun versusRun) {
-        GridEntity gridEntity = versusRun.getGrid();
-        Game game = new Game(
-            List.of(
-                new Player(
-                    versusRun.getTopLeftUser().getTeamName(),
-                    StartingTile.TOP_LEFT,
-                    null
-                ),
-                new Player(
-                    versusRun.getBottomRightUser().getTeamName(),
-                    StartingTile.BOTTOM_RIGHT,
-                    null
-                )
-            ),
-            new Grid(ListUtils.copy(gridEntity.getGrid()))
-        );
-        resolveMoves(game, versusRun.getMoves());
-
-        List<GridResultDto.Statistic> statistics = gameStatisticsService.getStatistics(
-            game);
+        List<GridResultDto.Statistic> statistics = gameResolverService.resolve(
+                versusRun
+            )
+            .statistics();
         for (int i = 0; i < statistics.size(); i++) {
             GridResultDto.Statistic stat1 = statistics.get(i);
             User user1 = switch (stat1.startingTile()) {
                 case TOP_LEFT -> versusRun.getTopLeftUser();
                 case BOTTOM_RIGHT -> versusRun.getBottomRightUser();
-                case TOP_RIGHT, BOTTOM_LEFT -> throw new IllegalStateException("VersusRun should not start TOP_RIGHT | BOTTOM_LEFT");
+                case TOP_RIGHT, BOTTOM_LEFT -> throw new IllegalStateException(
+                    "VersusRun should not start TOP_RIGHT | BOTTOM_LEFT");
             };
             Ladder ladder1 = ladderRepository.findByUser(user1)
                 .orElseGet(() -> new Ladder(user1));
@@ -97,7 +82,9 @@ public class EloService {
                 User user2 = switch (stat2.startingTile()) {
                     case TOP_LEFT -> versusRun.getTopLeftUser();
                     case BOTTOM_RIGHT -> versusRun.getBottomRightUser();
-                    case TOP_RIGHT, BOTTOM_LEFT -> throw new IllegalStateException("VersusRun should not start TOP_RIGHT | BOTTOM_LEFT");
+                    case TOP_RIGHT, BOTTOM_LEFT ->
+                        throw new IllegalStateException(
+                            "VersusRun should not start TOP_RIGHT | BOTTOM_LEFT");
                 };
                 Ladder ladder2 = ladderRepository.findByUser(user2)
                     .orElseGet(() -> new Ladder(user2));
@@ -123,36 +110,9 @@ public class EloService {
     }
 
     public void computeElo(BattleRun battleRun) {
-        GridEntity gridEntity = battleRun.getGrid();
-        Game game = new Game(
-            List.of(
-                new Player(
-                    battleRun.getTopLeftUser().getTeamName(),
-                    StartingTile.TOP_LEFT,
-                    null
-                ),
-                new Player(
-                    battleRun.getBottomRightUser().getTeamName(),
-                    StartingTile.BOTTOM_RIGHT,
-                    null
-                ),
-                new Player(
-                    battleRun.getTopRightUser().getTeamName(),
-                    StartingTile.TOP_RIGHT,
-                    null
-                ),
-                new Player(
-                    battleRun.getBottomLeftUser().getTeamName(),
-                    StartingTile.BOTTOM_LEFT,
-                    null
-                )
-            ),
-            new Grid(ListUtils.copy(gridEntity.getGrid()))
-        );
-        resolveMoves(game, battleRun.getMoves());
-
-        List<GridResultDto.Statistic> statistics = gameStatisticsService.getStatistics(
-            game);
+        List<GridResultDto.Statistic> statistics = gameResolverService.resolve(
+            battleRun
+        ).statistics();
         for (int i = 0; i < statistics.size(); i++) {
             GridResultDto.Statistic stat1 = statistics.get(i);
             User user1 = switch (stat1.startingTile()) {
@@ -192,12 +152,6 @@ public class EloService {
                 ladderRepository.save(ladder1);
                 ladderRepository.save(ladder2);
             }
-        }
-    }
-
-    private void resolveMoves(Game game, List<String> moves) {
-        for (int i = 0; i < moves.size(); i++) {
-            game.run(i, Integer.valueOf(moves.get(i)));
         }
     }
 

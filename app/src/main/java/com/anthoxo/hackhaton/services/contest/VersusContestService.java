@@ -9,6 +9,7 @@ import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.StartingTile;
 import com.anthoxo.hackhaton.repositories.VersusRunRepository;
 import com.anthoxo.hackhaton.services.game.DuelRunService;
+import com.anthoxo.hackhaton.services.game.GameResolverService;
 import com.anthoxo.hackhaton.services.ladder.EloService;
 import com.anthoxo.hackhaton.utils.ListUtils;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,15 @@ public class VersusContestService {
     private final DuelRunService duelRunService;
     private final VersusRunRepository versusRunRepository;
     private final EloService eloService;
+    private final GameResolverService gameResolverService;
 
     public VersusContestService(DuelRunService duelRunService,
-            VersusRunRepository versusRunRepository, EloService eloService) {
+            VersusRunRepository versusRunRepository, EloService eloService,
+        GameResolverService gameResolverService) {
         this.duelRunService = duelRunService;
         this.versusRunRepository = versusRunRepository;
         this.eloService = eloService;
+        this.gameResolverService = gameResolverService;
     }
 
     public void run(List<User> users, List<GridEntity> gridEntities) {
@@ -40,9 +44,10 @@ public class VersusContestService {
             User user1 = shuffledUsers.get(i);
             for (int j = i + 1; j < shuffledUsers.size(); j++) {
                 User user2 = shuffledUsers.get(j);
-                GridEntity gridEntity = gridEntities.get(gridCounter);
+                GridEntity gridEntity = gridEntities.get(gridCounter % gridEntities.size());
                 runDuel(user1, user2, gridEntity);
             }
+            gridCounter++;
         }
     }
 
@@ -60,6 +65,7 @@ public class VersusContestService {
                     user2,
                     moves1
             );
+            gameResolverService.resolve(versusRun1);
             versusRunRepository.save(versusRun1);
             eloService.computeElo(versusRun1);
             VersusRun versusRun2 = new VersusRun(
@@ -78,10 +84,11 @@ public class VersusContestService {
 
     public List<String> computeMoves(List<Grid> history) {
         List<String> moves = new ArrayList<>();
-        for (int i = 0; i < history.size(); i++) {
+        for (int i = 0; i < history.size() - 1; i++) {
+            Grid grid = history.get(i+1);
             StartingTile startingTile = i % 2 == 0 ? StartingTile.TOP_LEFT
                     : StartingTile.BOTTOM_RIGHT;
-            moves.add(history.get(i).getCurrentColor(startingTile).toString());
+            moves.add(grid.getCurrentColor(startingTile).toString());
         }
         return moves;
     }

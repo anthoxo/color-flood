@@ -114,7 +114,8 @@ public class BattleRoyaleContestService {
 
     public List<String> computeMoves(List<Grid> history) {
         List<String> moves = new ArrayList<>();
-        for (int i = 0; i < history.size(); i++) {
+        for (int i = 0; i < history.size() - 1; i++) {
+            Grid grid = history.get(i+1);
             StartingTile startingTile = switch (i % 4) {
                 case 0 -> StartingTile.TOP_LEFT;
                 case 1 -> StartingTile.BOTTOM_RIGHT;
@@ -122,7 +123,7 @@ public class BattleRoyaleContestService {
                 case 3 -> StartingTile.BOTTOM_LEFT;
                 default -> throw new IllegalStateException();
             };
-            moves.add(history.get(i).getCurrentColor(startingTile).toString());
+            moves.add(grid.getCurrentColor(startingTile).toString());
         }
         return moves;
     }
