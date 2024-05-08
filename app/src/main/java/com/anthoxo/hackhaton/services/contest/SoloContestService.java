@@ -1,15 +1,15 @@
 package com.anthoxo.hackhaton.services.contest;
 
 
+import com.anthoxo.hackhaton.dtos.GridResultDto;
 import com.anthoxo.hackhaton.entities.GridEntity;
 import com.anthoxo.hackhaton.entities.SoloRun;
 import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Grid;
-import com.anthoxo.hackhaton.models.StartingTile;
+import com.anthoxo.hackhaton.services.game.GameResolverService;
 import com.anthoxo.hackhaton.services.game.SoloRunService;
 import com.anthoxo.hackhaton.services.ladder.EloService;
-import com.anthoxo.hackhaton.utils.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,26 +24,26 @@ public class SoloContestService {
 
     private final SoloRunService soloRunService;
     private final EloService eloService;
+    private final GameResolverService gameResolverService;
 
-    public SoloContestService(SoloRunService soloRunService,
-            EloService eloService) {
+    public SoloContestService(
+        SoloRunService soloRunService,
+        EloService eloService,
+        GameResolverService gameResolverService
+    ) {
         this.soloRunService = soloRunService;
         this.eloService = eloService;
+        this.gameResolverService = gameResolverService;
     }
 
     public void run(List<User> users, List<GridEntity> gridEntities) {
         gridEntities.forEach(gridEntity -> {
             users.forEach(user -> {
-                Grid grid = new Grid(ListUtils.copy(gridEntity.getGrid()));
+                Grid grid = new Grid(gridEntity);
                 List<String> moves;
                 try {
-                    moves = soloRunService.run(user, grid)
-                            .history()
-                            .stream()
-                            .skip(1)
-                            .map(hist -> hist.getCurrentColor(StartingTile.TOP_LEFT))
-                            .map(String::valueOf)
-                            .toList();
+                    GridResultDto gridResultDto = soloRunService.run(user, grid);
+                    moves = gameResolverService.computeMoves(gridResultDto);
                 } catch (GameCancelledException ex) {
                     LOGGER.error(
                             "Something happen during the running, move set to 300.", ex);

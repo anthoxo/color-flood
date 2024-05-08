@@ -12,21 +12,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Service
-public class BattleRoyaleRunService {
+public class BattleRunService {
 
     private final GridService gridService;
     private final FileUtilsService fileUtilsService;
     private final GameRunnerService gameRunnerService;
     private final GameStatisticsService gameStatisticsService;
 
-    public BattleRoyaleRunService(GridService gridService,
-            FileUtilsService fileUtilsService,
-            GameRunnerService gameRunnerService,
-            GameStatisticsService gameStatisticsService) {
+    public BattleRunService(GridService gridService,
+        FileUtilsService fileUtilsService,
+        GameRunnerService gameRunnerService,
+        GameStatisticsService gameStatisticsService) {
         this.gridService = gridService;
         this.fileUtilsService = fileUtilsService;
         this.gameRunnerService = gameRunnerService;
@@ -34,31 +33,33 @@ public class BattleRoyaleRunService {
     }
 
     public GridResultDto runAlone(MultipartFile multipartFile)
-            throws GameCancelledException {
+        throws GameCancelledException {
         File file = fileUtilsService.generateTmpFile(multipartFile);
 
         Grid initialGrid = gridService.init(6);
         Player playerOne = new Player(
-                "local-1",
-                StartingTile.TOP_LEFT,
-                file.getPath()
+            "local-1",
+            StartingTile.TOP_LEFT,
+            file.getPath()
         );
         Player playerTwo = new Player(
-                "random-1",
-                StartingTile.BOTTOM_RIGHT,
-                GameRunnerService.RANDOM_LOCATION
+            "random-1",
+            StartingTile.BOTTOM_RIGHT,
+            GameRunnerService.RANDOM_LOCATION
         );
         Player playerThree = new Player(
-                "random-2",
-                StartingTile.TOP_RIGHT,
-                GameRunnerService.RANDOM_LOCATION
+            "random-2",
+            StartingTile.TOP_RIGHT,
+            GameRunnerService.RANDOM_LOCATION
         );
         Player playerFour = new Player(
-                "random-3",
-                StartingTile.BOTTOM_LEFT,
-                GameRunnerService.RANDOM_LOCATION
+            "random-3",
+            StartingTile.BOTTOM_LEFT,
+            GameRunnerService.RANDOM_LOCATION
         );
-        Game game = new Game(List.of(playerOne, playerTwo, playerThree, playerFour), initialGrid);
+        Game game = new Game(
+            List.of(playerOne, playerTwo, playerThree, playerFour),
+            initialGrid);
 
         try {
             gameRunnerService.run(game);
@@ -67,12 +68,13 @@ public class BattleRoyaleRunService {
         }
 
         return new GridResultDto(
-                game.getHistory(),
-                gameStatisticsService.getStatistics(game)
+            game.getHistory(),
+            gameStatisticsService.getStatistics(game)
         );
     }
 
-    public GridResultDto run(User user1, User user2, User user3, User user4, Grid grid)
+    public GridResultDto run(User user1, User user2, User user3, User user4,
+        Grid grid)
         throws GameCancelledException {
         Player playerOne = new Player(
             user1.getId().toString(),
@@ -94,7 +96,8 @@ public class BattleRoyaleRunService {
             StartingTile.BOTTOM_LEFT,
             user4.getCodeFilename()
         );
-        Game game = new Game(List.of(playerOne, playerTwo, playerThree, playerFour), grid);
+        Game game = new Game(
+            List.of(playerOne, playerTwo, playerThree, playerFour), grid);
         gameRunnerService.run(game);
         return new GridResultDto(
             game.getHistory(),

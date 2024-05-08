@@ -3,9 +3,9 @@ package com.anthoxo.hackhaton.controllers;
 import com.anthoxo.hackhaton.dtos.GridResultDto;
 import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.services.file.FileCheckerService;
-import com.anthoxo.hackhaton.services.game.BattleRoyaleRunService;
+import com.anthoxo.hackhaton.services.game.BattleRunService;
 import com.anthoxo.hackhaton.services.contest.ContestService;
-import com.anthoxo.hackhaton.services.game.DuelRunService;
+import com.anthoxo.hackhaton.services.game.VersusRunService;
 import com.anthoxo.hackhaton.services.game.SoloRunService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,20 +19,20 @@ public class GameRunController {
 
     private final FileCheckerService fileCheckerService;
     private final SoloRunService soloRunService;
-    private final DuelRunService duelRunService;
-    private final BattleRoyaleRunService battleRoyaleRunService;
+    private final VersusRunService versusRunService;
+    private final BattleRunService battleRunService;
     private final ContestService contestService;
 
     public GameRunController(
             FileCheckerService fileCheckerService,
             SoloRunService soloRunService,
-            DuelRunService duelRunService,
-            BattleRoyaleRunService battleRoyaleRunService,
+            VersusRunService versusRunService,
+            BattleRunService battleRunService,
             ContestService contestService) {
         this.fileCheckerService = fileCheckerService;
         this.soloRunService = soloRunService;
-        this.duelRunService = duelRunService;
-        this.battleRoyaleRunService = battleRoyaleRunService;
+        this.versusRunService = versusRunService;
+        this.battleRunService = battleRunService;
         this.contestService = contestService;
     }
 
@@ -47,7 +47,7 @@ public class GameRunController {
     public GridResultDto runVersus(@RequestParam("file") MultipartFile file)
             throws GameCancelledException {
         fileCheckerService.checkFileExtension(file);
-        return duelRunService.runWithRandom(file);
+        return versusRunService.runWithRandom(file);
     }
 
     @PostMapping("/battle")
@@ -55,7 +55,7 @@ public class GameRunController {
             @RequestParam("file") MultipartFile file)
             throws GameCancelledException {
         fileCheckerService.checkFileExtension(file);
-        return battleRoyaleRunService.runAlone(file);
+        return battleRunService.runAlone(file);
     }
 
     @PostMapping("/contest")

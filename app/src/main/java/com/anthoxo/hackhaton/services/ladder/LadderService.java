@@ -1,7 +1,6 @@
 package com.anthoxo.hackhaton.services.ladder;
 
 import com.anthoxo.hackhaton.dtos.UserDto;
-import com.anthoxo.hackhaton.entities.Ladder;
 import com.anthoxo.hackhaton.repositories.LadderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

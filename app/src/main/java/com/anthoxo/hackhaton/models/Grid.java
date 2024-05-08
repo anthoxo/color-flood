@@ -1,5 +1,6 @@
 package com.anthoxo.hackhaton.models;
 
+import com.anthoxo.hackhaton.entities.GridEntity;
 import com.anthoxo.hackhaton.utils.ListUtils;
 
 import java.util.ArrayList;
@@ -9,6 +10,10 @@ public record Grid(List<List<Integer>> colors) {
 
     public Grid(Grid grid) {
         this(ListUtils.copy(grid.colors));
+    }
+
+    public Grid(GridEntity gridEntity) {
+        this(ListUtils.copy(gridEntity.getGrid()));
     }
 
     public long getNumberOfColors() {

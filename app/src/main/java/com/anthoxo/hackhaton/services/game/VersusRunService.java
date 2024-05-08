@@ -15,14 +15,14 @@ import java.io.File;
 import java.util.List;
 
 @Service
-public class DuelRunService {
+public class VersusRunService {
 
     private final GridService gridService;
     private final FileUtilsService fileUtilsService;
     private final GameRunnerService gameRunnerService;
     private final GameStatisticsService gameStatisticsService;
 
-    public DuelRunService(GridService gridService,
+    public VersusRunService(GridService gridService,
             FileUtilsService fileUtilsService,
             GameRunnerService gameRunnerService,
             GameStatisticsService gameStatisticsService) {

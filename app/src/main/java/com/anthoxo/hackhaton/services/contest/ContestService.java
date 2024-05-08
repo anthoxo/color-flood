@@ -24,20 +24,20 @@ public class ContestService {
     private final UserService userService;
     private final SoloContestService soloContestService;
     private final VersusContestService versusContestService;
-    private final BattleRoyaleContestService battleRoyaleContestService;
+    private final BattleContestService battleContestService;
 
     public ContestService(GridService gridService,
             GridRepository gridRepository,
             UserService userService,
             SoloContestService soloContestService,
             VersusContestService versusContestService,
-        BattleRoyaleContestService battleRoyaleContestService) {
+        BattleContestService battleContestService) {
         this.gridService = gridService;
         this.gridRepository = gridRepository;
         this.userService = userService;
         this.soloContestService = soloContestService;
         this.versusContestService = versusContestService;
-        this.battleRoyaleContestService = battleRoyaleContestService;
+        this.battleContestService = battleContestService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -50,7 +50,7 @@ public class ContestService {
 
         runForSolo(users, gridEntities);
         runForVersus(users, gridEntities);
-        runForBattleRoyale(users, gridEntities);
+        runForBattle(users, gridEntities);
         LOGGER.info("End computing contest!!");
     }
 
@@ -78,8 +78,8 @@ public class ContestService {
         versusContestService.run(users, gridEntities);
     }
 
-    private void runForBattleRoyale(List<User> users, List<GridEntity> gridEntities) {
+    private void runForBattle(List<User> users, List<GridEntity> gridEntities) {
         Collections.shuffle(gridEntities);
-        battleRoyaleContestService.run(users, gridEntities);
+        battleContestService.run(users, gridEntities);
     }
 }

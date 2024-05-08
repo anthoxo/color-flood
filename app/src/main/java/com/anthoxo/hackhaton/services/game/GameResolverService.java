@@ -8,9 +8,9 @@ import com.anthoxo.hackhaton.models.Game;
 import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.Player;
 import com.anthoxo.hackhaton.models.StartingTile;
-import com.anthoxo.hackhaton.utils.ListUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,7 +28,7 @@ public class GameResolverService {
             StartingTile.TOP_LEFT,
             soloRun.getUser().getCodeFilename()
         );
-        Grid grid = new Grid(ListUtils.copy(soloRun.getGrid().getGrid()));
+        Grid grid = new Grid(soloRun.getGrid());
         Game game = new Game(List.of(player), grid);
         resolve(game, soloRun.getMoves());
         return new GridResultDto(game.getHistory(), gameStatisticsService.getStatistics(game));
@@ -45,7 +45,7 @@ public class GameResolverService {
             StartingTile.BOTTOM_RIGHT,
             versusRun.getBottomRightUser().getCodeFilename()
         );
-        Grid grid = new Grid(ListUtils.copy(versusRun.getGrid().getGrid()));
+        Grid grid = new Grid(versusRun.getGrid());
         Game game = new Game(List.of(player1, player2), grid);
         resolve(game, versusRun.getMoves());
         return new GridResultDto(game.getHistory(), gameStatisticsService.getStatistics(game));
@@ -72,13 +72,32 @@ public class GameResolverService {
             StartingTile.BOTTOM_LEFT,
             battleRun.getBottomLeftUser().getCodeFilename()
         );
-        Grid grid = new Grid(ListUtils.copy(battleRun.getGrid().getGrid()));
+        Grid grid = new Grid(battleRun.getGrid());
         Game game = new Game(List.of(player1, player2, player3, player4), grid);
         resolve(game, battleRun.getMoves());
         return new GridResultDto(game.getHistory(), gameStatisticsService.getStatistics(game));
     }
 
-    public void resolve(Game game, List<String> moves) {
+    public List<String> computeMoves(GridResultDto gridResultDto) {
+        int numberOfPlayers = gridResultDto.statistics().size();
+        List<Grid> history = gridResultDto.history();
+        List<String> moves = new ArrayList<>();
+        for (int i = 0; i < history.size() - 1; i++) {
+            Grid grid = history.get(i+1);
+            StartingTile startingTile = switch (i % numberOfPlayers) {
+                case 0 -> StartingTile.TOP_LEFT;
+                case 1 -> StartingTile.BOTTOM_RIGHT;
+                case 2 -> StartingTile.TOP_RIGHT;
+                case 3 -> StartingTile.BOTTOM_LEFT;
+                default -> throw new IllegalStateException();
+            };
+            moves.add(grid.getCurrentColor(startingTile).toString());
+        }
+        return moves;
+
+    }
+
+    private void resolve(Game game, List<String> moves) {
         for (int i = 0; i < moves.size(); i++) {
             game.run(i, Integer.valueOf(moves.get(i)));
         }

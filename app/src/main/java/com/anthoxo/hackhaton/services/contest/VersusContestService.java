@@ -6,12 +6,10 @@ import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.entities.VersusRun;
 import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Grid;
-import com.anthoxo.hackhaton.models.StartingTile;
 import com.anthoxo.hackhaton.repositories.VersusRunRepository;
-import com.anthoxo.hackhaton.services.game.DuelRunService;
+import com.anthoxo.hackhaton.services.game.VersusRunService;
 import com.anthoxo.hackhaton.services.game.GameResolverService;
 import com.anthoxo.hackhaton.services.ladder.EloService;
-import com.anthoxo.hackhaton.utils.ListUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,15 +19,18 @@ import java.util.List;
 @Service
 public class VersusContestService {
 
-    private final DuelRunService duelRunService;
+    private final VersusRunService versusRunService;
     private final VersusRunRepository versusRunRepository;
     private final EloService eloService;
     private final GameResolverService gameResolverService;
 
-    public VersusContestService(DuelRunService duelRunService,
-            VersusRunRepository versusRunRepository, EloService eloService,
-        GameResolverService gameResolverService) {
-        this.duelRunService = duelRunService;
+    public VersusContestService(
+        VersusRunService versusRunService,
+        VersusRunRepository versusRunRepository,
+        EloService eloService,
+        GameResolverService gameResolverService
+    ) {
+        this.versusRunService = versusRunService;
         this.versusRunRepository = versusRunRepository;
         this.eloService = eloService;
         this.gameResolverService = gameResolverService;
@@ -45,51 +46,32 @@ public class VersusContestService {
             for (int j = i + 1; j < shuffledUsers.size(); j++) {
                 User user2 = shuffledUsers.get(j);
                 GridEntity gridEntity = gridEntities.get(gridCounter % gridEntities.size());
-                runDuel(user1, user2, gridEntity);
+                run(user1, user2, gridEntity);
             }
             gridCounter++;
         }
     }
 
-    public void runDuel(User user1, User user2, GridEntity gridEntity) {
-        Grid grid1 = new Grid(ListUtils.copy(gridEntity.getGrid()));
-        Grid grid2 = new Grid(ListUtils.copy(gridEntity.getGrid()));
+    public void run(User user1, User user2, GridEntity gridEntity) {
+        runVersus(user1, user2, gridEntity);
+        runVersus(user2, user1, gridEntity);
+    }
+
+    private void runVersus(User user1, User user2, GridEntity gridEntity) {
+        Grid grid = new Grid(gridEntity);
         try {
-            GridResultDto dto1 = duelRunService.run(user1, user2, grid1);
-            GridResultDto dto2 = duelRunService.run(user2, user1, grid2);
-            List<String> moves1 = computeMoves(dto1.history());
-            List<String> moves2 = computeMoves(dto2.history());
-            VersusRun versusRun1 = new VersusRun(
-                    gridEntity,
-                    user1,
-                    user2,
-                    moves1
+            GridResultDto gridResultDto = versusRunService.run(user1, user2, grid);
+            List<String> moves = gameResolverService.computeMoves(gridResultDto);
+            VersusRun versusRun = new VersusRun(
+                gridEntity,
+                user1,
+                user2,
+                moves
             );
-            gameResolverService.resolve(versusRun1);
-            versusRunRepository.save(versusRun1);
-            eloService.computeElo(versusRun1);
-            VersusRun versusRun2 = new VersusRun(
-                    gridEntity,
-                    user2,
-                    user1,
-                    moves2
-            );
-            versusRunRepository.save(versusRun2);
-            eloService.computeElo(versusRun2);
+            versusRunRepository.save(versusRun);
+            eloService.computeElo(versusRun);
         } catch (GameCancelledException gameCancelledException) {
             // handle loss for both players
         }
-
-    }
-
-    public List<String> computeMoves(List<Grid> history) {
-        List<String> moves = new ArrayList<>();
-        for (int i = 0; i < history.size() - 1; i++) {
-            Grid grid = history.get(i+1);
-            StartingTile startingTile = i % 2 == 0 ? StartingTile.TOP_LEFT
-                    : StartingTile.BOTTOM_RIGHT;
-            moves.add(grid.getCurrentColor(startingTile).toString());
-        }
-        return moves;
     }
 }
