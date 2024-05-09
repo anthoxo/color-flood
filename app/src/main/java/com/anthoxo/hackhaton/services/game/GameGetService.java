@@ -67,7 +67,7 @@ public class GameGetService {
     }
 
     private GameOverviewDto.GameDto mapRunToGameDto(Run run) {
-        return new GameOverviewDto.GameDto(run.getId(), run.getUsers()
+        return new GameOverviewDto.GameDto(run.getId(), run.getGrid().getId(), run.getUsers()
             .stream()
             .map(User::getTeamName)
             .toList());

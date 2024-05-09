@@ -7,4 +7,6 @@ public sealed interface Run permits SoloRun, VersusRun, BattleRun {
     Long getId();
 
     List<User> getUsers();
+
+    GridEntity getGrid();
 }

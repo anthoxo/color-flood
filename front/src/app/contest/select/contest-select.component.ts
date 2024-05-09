@@ -1,25 +1,21 @@
 import { Component, computed, input, output, signal, Signal, WritableSignal } from '@angular/core';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { GameOverviewDto } from '../../models/game-overview.model';
-import { MatList, MatListItem, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { DecimalPipe } from '@angular/common';
-import { MatButton } from '@angular/material/button';
-import { MatDivider } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'contest-select',
   templateUrl: 'contest-select.component.html',
   standalone: true,
   imports: [
-    MatButtonToggleGroup,
-    MatButtonToggle,
-    MatList,
+    MatTableModule,
+    MatButtonToggleModule,
+    MatButtonModule,
+    MatCardModule,
     DecimalPipe,
-    MatButton,
-    MatListItem,
-    MatListItemLine,
-    MatListItemTitle,
-    MatDivider
   ]
 })
 export class ContestSelectComponent {
@@ -30,19 +26,22 @@ export class ContestSelectComponent {
 
   games = computed(() => {
     const gameSelection = this.mode();
-    if (gameSelection === "SOLO") {
-      return this.overview().soloGames;
+    if (gameSelection === 'SOLO') {
+      return [...this.overview().soloGames].sort((a, b) => b.id - a.id);
     }
-    if (gameSelection === "VERSUS") {
-      return this.overview().versusGames;
+    if (gameSelection === 'VERSUS') {
+      return [...this.overview().versusGames].sort((a, b) => b.id - a.id);
     }
-    if (gameSelection === "BATTLE") {
-      return this.overview().battleGames;
+    if (gameSelection === 'BATTLE') {
+      return [...this.overview().battleGames].sort((a, b) => b.id - a.id);
     }
     return [];
   });
   selectedGame = signal<number>(0);
-
+  datasource = computed(() => {
+    return new MatTableDataSource(this.games());
+  });
+  displayedColumns = ['gridId', 'players'];
 
   select(gameId: number) {
     this.selectedGame.set(gameId);

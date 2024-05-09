@@ -1,15 +1,29 @@
-<div class="h-full flex flex-col overflow-y-hidden">
-  <mat-button-toggle-group hideSingleSelectionIndicator>
-    <mat-button-toggle value="SOLO" (click)="mode.set('SOLO')">Solo</mat-button-toggle>
-    <mat-button-toggle value="VERSUS" (click)="mode.set('VERSUS')">Versus</mat-button-toggle>
-    <mat-button-toggle value="BATTLE" (click)="mode.set('BATTLE')">Battle</mat-button-toggle>
-  </mat-button-toggle-group>
-  <mat-list class="h-full overflow-y-auto">
-    @for (game of games(); track game.id) {
-      <mat-list-item [activated]="game.id === selectedGame()" (click)="select(game.id)">
-        <span class="text-xs text-wrap">{{ game.players.join(' ⚡️ ') }}</span>
-      </mat-list-item>
-      <mat-divider></mat-divider>
-    }
-  </mat-list>
+<div class="max-h-[90vh] flex flex-col overflow-y-auto">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title class="gap-x-8">
+        <mat-button-toggle-group hideSingleSelectionIndicator>
+          <mat-button-toggle value="SOLO" (click)="mode.set('SOLO')">Solo</mat-button-toggle>
+          <mat-button-toggle value="VERSUS" (click)="mode.set('VERSUS')">Versus</mat-button-toggle>
+          <mat-button-toggle value="BATTLE" (click)="mode.set('BATTLE')">Battle</mat-button-toggle>
+        </mat-button-toggle-group>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content></mat-card-content>
+  </mat-card>
+
+  <table mat-table [dataSource]="datasource()" class="overflow-y-auto">
+    <ng-container matColumnDef="gridId">
+      <th mat-header-cell *matHeaderCellDef> Grid ID </th>
+      <td mat-cell *matCellDef="let element"> {{ element.gridId }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="players">
+      <th mat-header-cell *matHeaderCellDef> Players </th>
+      <td mat-cell *matCellDef="let element"> {{element.players.join(' ⚡️ ')}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr (click)="select(row.id)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </div>

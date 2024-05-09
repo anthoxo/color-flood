@@ -69,7 +69,7 @@ public class ContestService {
         Collections.shuffle(gridEntities);
         soloContestService.run(users, gridEntities
                 .stream()
-                .limit(12)
+                .limit(6)
                 .toList());
     }
 
@@ -77,7 +77,7 @@ public class ContestService {
         Collections.shuffle(gridEntities);
         versusContestService.run(users, gridEntities
             .stream()
-            .limit(8)
+            .limit(4)
             .toList());
     }
 
@@ -85,7 +85,7 @@ public class ContestService {
         Collections.shuffle(gridEntities);
         battleContestService.run(users, gridEntities
             .stream()
-            .limit(8)
+            .limit(4)
             .toList());
     }
 }

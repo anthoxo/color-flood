@@ -6,5 +6,6 @@ export interface GameOverviewDto {
 
 interface GameDto {
   id: number;
+  gridId: number;
   players: string[]
 }

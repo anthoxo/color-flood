@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>{{ title() }}</h2>
+<mat-dialog-content>
+  @if (gridResultDto()) {
+    <div class="flex flex-row gap-x-8">
+      <grid-runner-statistics [gridResultDto]="gridResultDto()"></grid-runner-statistics>
+      <grid-runner class="w-full h-full" [gridResultDto]="gridResultDto()"></grid-runner>
+    </div>
+  }
+</mat-dialog-content>

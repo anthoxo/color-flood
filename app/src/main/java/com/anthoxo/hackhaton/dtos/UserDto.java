@@ -1,11 +1,17 @@
 package com.anthoxo.hackhaton.dtos;
 
-import com.anthoxo.hackhaton.entities.User;
+import com.anthoxo.hackhaton.entities.Ladder;
 
-public record UserDto(Long id, String teamName, double elo) {
+public record UserDto(Long id, String teamName, double soloElo,
+                      double versusElo, double battleElo) {
 
-    public static UserDto toDto(User user) {
-        return new UserDto(user.getId(), user.getTeamName(),
-                user.getLadder().getSoloElo());
+    public UserDto(Ladder ladder) {
+        this(
+            ladder.getUserId(),
+            ladder.getUser().getTeamName(),
+            ladder.getSoloElo(),
+            ladder.getVersusElo(),
+            ladder.getBattleElo()
+        );
     }
 }

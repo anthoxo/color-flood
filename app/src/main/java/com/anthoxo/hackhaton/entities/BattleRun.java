@@ -73,7 +73,7 @@ public final class BattleRun implements Run {
 
     @Override
     public List<User> getUsers() {
-        return List.of(topLeftUser, topRightUser, bottomLeftUser, bottomRightUser);
+        return List.of(topLeftUser, bottomRightUser, topRightUser, bottomLeftUser);
     }
 
     public void setId(Long id) {

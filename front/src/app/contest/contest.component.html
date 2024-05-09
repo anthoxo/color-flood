@@ -1,42 +1,14 @@
 <div class="flex h-full w-full gap-x-8">
-  <div class="lg:w-1/3 w-1/2 h-full flex flex-row justify-between">
-    <mat-card class="max-h-[90vh] w-1/2">
-      <mat-card-header>
-        <mat-card-title>Ladder</mat-card-title>
-      </mat-card-header>
-      <mat-card-content class="overflow-y-auto">
-        <mat-list>
-          @for (user of sortedUserDtos(); track user.id) {
-            <mat-list-item>
-              <span matListItemTitle>{{ getLadderIcon(user) }} {{ user.teamName }} </span>
-              <span matListItemLine>{{ user.elo | number }}</span>
-            </mat-list-item>
-          }
-          <mat-list-item>
-            <button class="w-full" mat-raised-button color="primary" (click)="runContest()">RUN</button>
-          </mat-list-item>
-        </mat-list>
-      </mat-card-content>
-    </mat-card>
+  <div class="w-1/2 h-full flex flex-col">
+    <button class="w-full" mat-raised-button color="primary" (click)="runContest()">RUN</button>
+    <contest-ladder class="w-full h-full"></contest-ladder>
+  </div>
+  <div class="w-1/2">
     <contest-select
-      class="max-h-[90vh] w-1/2"
+      class="max-h-[90vh]"
       [overview]="gameOverview()"
       (selectGame)="onSelectGame($event)"
     ></contest-select>
-  </div>
-  <div class="lg:w-1/3 w-0">
-    @if (gridResultDto() !== undefined) {
-      <grid-runner-statistics [gridResultDto]="gridResultDto()"></grid-runner-statistics>
-    }
-  </div>
-  <div class="lg:w-1/3 w-1/2 flex justify-center items-center">
-    @if (loading()) {
-      <mat-spinner></mat-spinner>
-    } @else if (gridResultDto() !== undefined)  {
-      <grid-runner class="w-full h-full" [gridResultDto]="gridResultDto()"></grid-runner>
-    } @else {
-      <random-grid class="w-full h-full"></random-grid>
-    }
   </div>
 </div>
 
