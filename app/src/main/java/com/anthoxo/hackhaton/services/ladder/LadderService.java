@@ -20,7 +20,7 @@ public class LadderService {
     public List<UserDto> getLadder() {
         return ladderRepository.findAll()
                 .stream()
-                .map(ladder -> new UserDto(ladder.getUserId(), ladder.getUser().getTeamName(), ladder.getElo()))
+                .map(ladder -> new UserDto(ladder.getUserId(), ladder.getUser().getTeamName(), ladder.getSoloElo()))
                 .toList();
     }
 }

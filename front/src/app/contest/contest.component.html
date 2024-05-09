@@ -6,9 +6,9 @@
       </mat-card-header>
       <mat-card-content class="overflow-y-auto">
         <mat-list>
-          @for (user of userDtos(); track user.id) {
+          @for (user of sortedUserDtos(); track user.id) {
             <mat-list-item>
-              <span matListItemTitle>{{ user.teamName }}</span>
+              <span matListItemTitle>{{ getLadderIcon(user) }} {{ user.teamName }} </span>
               <span matListItemLine>{{ user.elo | number }}</span>
             </mat-list-item>
           }

@@ -81,7 +81,8 @@ public class GameRunnerService {
                 Integer res = Integer.valueOf(answer);
                 game.run(turn, res);
             } catch (Exception ex) {
-                LOGGER.error("Something happens for the player={}, ex={}", game.getCurrentPlayer(turn), ex);
+//                LOGGER.error("Something happens for the player={}, ex={}", game.getCurrentPlayer(turn), ex.getMessage());
+                LOGGER.error("Something happens for the player={}", game.getCurrentPlayer(turn));
                 game.gameOver(turn);
             }
             if (game.isFinished()) {

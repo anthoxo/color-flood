@@ -9,7 +9,7 @@ import java.util.List;
 
 @Table
 @Entity(name = "solo_runs")
-public class SoloRun implements Run {
+public final class SoloRun implements Run {
     @Id
     @GeneratedValue(generator = "solo-run-generator")
     @GenericGenerator(

@@ -1,4 +1,4 @@
-import { Component, effect, HostBinding, signal, Signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, HostBinding, signal, Signal, WritableSignal } from '@angular/core';
 import { GameRunHttpService } from '../services/game-run-http.service';
 import { MatButton } from '@angular/material/button';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -47,6 +47,11 @@ export class ContestComponent {
   @HostBinding('class.h-full') hFull = true;
 
   userDtos: Signal<UserDto[]> = toSignal(this.ladderHttpService.getLadder(), { initialValue: [] });
+  sortedUserDtos = computed(() => {
+    const userDtos = this.userDtos();
+    userDtos.sort((userA, userB) => userB.elo - userA.elo);
+    return userDtos;
+  })
 
   gameOverview: Signal<GameOverviewDto> = toSignal(this.gameHttpService.getAll(), {
     initialValue: {
@@ -61,6 +66,20 @@ export class ContestComponent {
   constructor(private gameRunHttpService: GameRunHttpService,
               private ladderHttpService: LadderHttpService,
               private gameHttpService: GameHttpService) {
+  }
+
+  getLadderIcon(user: UserDto) {
+    const sortedUsers = this.sortedUserDtos();
+    if (user.id === sortedUsers[0].id) {
+      return '🥇';
+    }
+    if (user.id === sortedUsers[1].id) {
+      return '🥈';
+    }
+    if (user.id === sortedUsers[2].id) {
+      return '🥉';
+    }
+    return '🍫';
   }
 
   runContest() {

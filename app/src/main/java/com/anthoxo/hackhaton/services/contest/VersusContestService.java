@@ -39,16 +39,14 @@ public class VersusContestService {
     public void run(List<User> users, List<GridEntity> gridEntities) {
         List<User> shuffledUsers = new ArrayList<>(users);
         Collections.shuffle(shuffledUsers);
-
-        int gridCounter = 0;
-        for (int i = 0; i < shuffledUsers.size(); i++) {
-            User user1 = shuffledUsers.get(i);
-            for (int j = i + 1; j < shuffledUsers.size(); j++) {
-                User user2 = shuffledUsers.get(j);
-                GridEntity gridEntity = gridEntities.get(gridCounter % gridEntities.size());
-                run(user1, user2, gridEntity);
+        for (GridEntity gridEntity : gridEntities) {
+            for (int i = 0; i < shuffledUsers.size(); i++) {
+                User user1 = shuffledUsers.get(i);
+                for (int j = i + 1; j < shuffledUsers.size(); j++) {
+                    User user2 = shuffledUsers.get(j);
+                    run(user1, user2, gridEntity);
+                }
             }
-            gridCounter++;
         }
     }
 

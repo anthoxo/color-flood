@@ -38,22 +38,21 @@ public class BattleContestService {
         List<User> shuffledUsers = new ArrayList<>(users);
         Collections.shuffle(shuffledUsers);
 
-        int gridCounter = 0;
-        for (int i1 = 0; i1 < shuffledUsers.size(); i1++) {
-            User user1 = shuffledUsers.get(i1);
+        for (GridEntity gridEntity : gridEntities) {
+            for (int i1 = 0; i1 < shuffledUsers.size(); i1++) {
+                User user1 = shuffledUsers.get(i1);
 
-            for (int i2 = i1 + 1; i2 < shuffledUsers.size(); i2++) {
-                User user2 = shuffledUsers.get(i2);
+                for (int i2 = i1 + 1; i2 < shuffledUsers.size(); i2++) {
+                    User user2 = shuffledUsers.get(i2);
 
-                for (int i3 = i2 + 1; i3 < shuffledUsers.size(); i3++) {
-                    User user3 = shuffledUsers.get(i3);
+                    for (int i3 = i2 + 1; i3 < shuffledUsers.size(); i3++) {
+                        User user3 = shuffledUsers.get(i3);
 
-                    for (int i4 = i3 + 1; i4 < shuffledUsers.size(); i4++) {
-                        User user4 = shuffledUsers.get(i4);
+                        for (int i4 = i3 + 1; i4 < shuffledUsers.size(); i4++) {
+                            User user4 = shuffledUsers.get(i4);
 
-                        GridEntity gridEntity = gridEntities.get(gridCounter % gridEntities.size());
-                        run(user1, user2, user3, user4, gridEntity);
-                        gridCounter++;
+                            run(user1, user2, user3, user4, gridEntity);
+                        }
                     }
                 }
             }

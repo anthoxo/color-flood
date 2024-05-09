@@ -2,6 +2,7 @@ package com.anthoxo.hackhaton.services.game;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
 import com.anthoxo.hackhaton.entities.BattleRun;
+import com.anthoxo.hackhaton.entities.Run;
 import com.anthoxo.hackhaton.entities.SoloRun;
 import com.anthoxo.hackhaton.entities.VersusRun;
 import com.anthoxo.hackhaton.models.Game;
@@ -20,6 +21,14 @@ public class GameResolverService {
 
     public GameResolverService(GameStatisticsService gameStatisticsService) {
         this.gameStatisticsService = gameStatisticsService;
+    }
+
+    public GridResultDto resolve(Run run) {
+        return switch (run) {
+            case SoloRun soloRun -> resolve(soloRun);
+            case VersusRun versusRun -> resolve(versusRun);
+            case BattleRun battleRun -> resolve(battleRun);
+        };
     }
 
     public GridResultDto resolve(SoloRun soloRun) {

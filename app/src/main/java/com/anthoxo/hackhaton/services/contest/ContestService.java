@@ -69,17 +69,23 @@ public class ContestService {
         Collections.shuffle(gridEntities);
         soloContestService.run(users, gridEntities
                 .stream()
-                .limit(10)
+                .limit(12)
                 .toList());
     }
 
     private void runForVersus(List<User> users, List<GridEntity> gridEntities) {
         Collections.shuffle(gridEntities);
-        versusContestService.run(users, gridEntities);
+        versusContestService.run(users, gridEntities
+            .stream()
+            .limit(8)
+            .toList());
     }
 
     private void runForBattle(List<User> users, List<GridEntity> gridEntities) {
         Collections.shuffle(gridEntities);
-        battleContestService.run(users, gridEntities);
+        battleContestService.run(users, gridEntities
+            .stream()
+            .limit(8)
+            .toList());
     }
 }
