@@ -3,7 +3,8 @@ package com.anthoxo.hackhaton.dtos;
 import com.anthoxo.hackhaton.entities.Ladder;
 
 public record UserDto(Long id, String teamName, double soloElo,
-                      double versusElo, double battleElo) {
+                      double versusElo, double battleElo,
+                      double elo) {
 
     public UserDto(Ladder ladder) {
         this(
@@ -11,7 +12,8 @@ public record UserDto(Long id, String teamName, double soloElo,
             ladder.getUser().getTeamName(),
             ladder.getSoloElo(),
             ladder.getVersusElo(),
-            ladder.getBattleElo()
+            ladder.getBattleElo(),
+            (ladder.getSoloElo() + ladder.getVersusElo() + ladder.getBattleElo()) / 3.
         );
     }
 }

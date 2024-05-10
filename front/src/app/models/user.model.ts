@@ -4,4 +4,5 @@ export interface UserDto {
    soloElo: number;
    versusElo: number;
    battleElo: number;
+   elo: number;
 }

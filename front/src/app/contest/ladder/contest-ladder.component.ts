@@ -25,7 +25,7 @@ export class ContestLadderComponent {
   userDtos: Signal<UserDto[]> = toSignal(this.ladderHttpService.getLadder(), { initialValue: [] });
   sortedUserDtos = computed(() => {
     const userDtos = this.userDtos();
-    userDtos.sort((userA, userB) => userB.soloElo - userA.soloElo);
+    userDtos.sort((userA, userB) => userB.elo - userA.elo);
     return userDtos;
   });
 
@@ -40,7 +40,7 @@ export class ContestLadderComponent {
     return datasource;
   });
 
-  displayedColumns = ["position", "teamName", "soloElo", "versusElo", "battleElo"];
+  displayedColumns = ["position", "teamName", "elo", "soloElo", "versusElo", "battleElo"];
 
   constructor(private ladderHttpService: LadderHttpService) {}
 

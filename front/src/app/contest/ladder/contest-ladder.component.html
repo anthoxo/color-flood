@@ -7,13 +7,18 @@
 
 <table mat-table matSort [dataSource]="datasource()" class="mat-elevation-z8 demo-table">
   <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef> No. </th>
-    <td mat-cell *matCellDef="let element; let i = index"> {{ getLadderIcon(i+1) }} {{ i + 1 }} </td>
+    <th mat-header-cell class="border-r-2" *matHeaderCellDef> No. </th>
+    <td mat-cell class="border-r-2" *matCellDef="let element; let i = index"> {{ getLadderIcon(i+1) }} {{ i + 1 }} </td>
   </ng-container>
 
   <ng-container matColumnDef="teamName">
-    <th mat-header-cell mat-sort-header *matHeaderCellDef> Name </th>
+    <th mat-header-cell *matHeaderCellDef> Name </th>
     <td mat-cell *matCellDef="let element"> {{element.teamName}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="elo">
+    <th mat-header-cell mat-sort-header *matHeaderCellDef> 👑 Elo 👑 </th>
+    <td mat-cell *matCellDef="let element"> {{element.elo | number:'1.0-3' }} </td>
   </ng-container>
 
   <ng-container matColumnDef="soloElo">
