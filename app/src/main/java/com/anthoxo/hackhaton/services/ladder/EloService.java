@@ -9,6 +9,7 @@ import com.anthoxo.hackhaton.services.game.GameResolverService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -37,6 +38,7 @@ public class EloService {
         this.gameResolverService = gameResolverService;
     }
 
+    @Transactional
     public void computeElo(List<SoloRun> soloRuns) {
         for (int i = 0; i < soloRuns.size(); i++) {
             SoloRun soloRun1 = soloRuns.get(i);
@@ -81,6 +83,7 @@ public class EloService {
         }
     }
 
+    @Transactional
     public void computeElo(VersusRun versusRun) {
         computeElo(versusRun, tile -> switch (tile) {
             case TOP_LEFT -> versusRun.getTopLeftUser();
@@ -90,6 +93,7 @@ public class EloService {
         });
     }
 
+    @Transactional
     public void computeElo(BattleRun battleRun) {
         computeElo(battleRun, tile -> switch (tile) {
             case TOP_LEFT -> battleRun.getTopLeftUser();
@@ -99,6 +103,7 @@ public class EloService {
         });
     }
 
+    @Transactional
     public void computeLossElo(VersusRun versusRun) {
         computeLossElo(versusRun, tile -> switch (tile) {
             case TOP_LEFT -> versusRun.getTopLeftUser();
@@ -108,6 +113,7 @@ public class EloService {
         });
     }
 
+    @Transactional
     public void computeLossElo(BattleRun battleRun) {
         computeLossElo(battleRun, tile -> switch (tile) {
             case TOP_LEFT -> battleRun.getTopLeftUser();

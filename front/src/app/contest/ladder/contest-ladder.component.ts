@@ -1,11 +1,12 @@
-import { Component, computed, signal, Signal, ViewChild } from '@angular/core';
+import { Component, computed, input, signal, Signal, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { UserDto } from '../../models/user.model';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { LadderHttpService } from '../../services/ladder-http.service';
 import { DecimalPipe } from '@angular/common';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatCardModule } from '@angular/material/card';
+import { interval, switchMap } from 'rxjs';
 
 @Component({
   selector: 'contest-ladder',
@@ -22,7 +23,23 @@ export class ContestLadderComponent {
   @ViewChild(MatSort) set matSort(sort: MatSort) {
     this.sortSignal.set(sort);
   }
-  userDtos: Signal<UserDto[]> = toSignal(this.ladderHttpService.getLadder(), { initialValue: [] });
+
+  poll = input.required<boolean>();
+
+  userDtos$ = toObservable(this.poll)
+    .pipe(
+      switchMap((shouldPoll) => {
+        if (shouldPoll) {
+          return interval(2000)
+            .pipe(
+              switchMap(() => this.ladderHttpService.getLadder())
+            );
+        }
+        return this.ladderHttpService.getLadder();
+      })
+    );
+
+  userDtos: Signal<UserDto[]> = toSignal(this.userDtos$, { initialValue: [] });
   sortedUserDtos = computed(() => {
     const userDtos = this.userDtos();
     userDtos.sort((userA, userB) => userB.elo - userA.elo);
@@ -40,7 +57,7 @@ export class ContestLadderComponent {
     return datasource;
   });
 
-  displayedColumns = ["position", "teamName", "elo", "soloElo", "versusElo", "battleElo"];
+  displayedColumns = ['position', 'teamName', 'elo', 'soloElo', 'versusElo', 'battleElo'];
 
   constructor(private ladderHttpService: LadderHttpService) {}
 

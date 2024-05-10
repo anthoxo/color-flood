@@ -1,12 +1,19 @@
 <div class="flex h-full w-full gap-x-8">
-  <div class="w-1/2 h-full flex flex-col">
-    <button class="w-full" mat-raised-button color="primary" (click)="runContest()">RUN</button>
-    <contest-ladder class="w-full h-full"></contest-ladder>
+  <div class="w-1/2 h-full flex flex-col gap-y-2">
+    <div class="flex flex-row justify-between w-full items-center">
+      <mat-slide-toggle (change)="pollChecked.set($event.checked)"> Poll </mat-slide-toggle>
+      <div class="w-1/2 flex flex-row gap-x-1 items-center">
+        <button class="w-full" mat-raised-button color="primary" (click)="runContest('SOLO')">RUN SOLO</button>
+        <button class="w-full" mat-raised-button color="primary" (click)="runContest('VERSUS')">RUN VERSUS</button>
+        <button class="w-full" mat-raised-button color="primary" (click)="runContest('BATTLE')">RUN BATTLE</button>
+      </div>
+    </div>
+    <contest-ladder class="w-full h-full" [poll]="pollChecked()"></contest-ladder>
   </div>
   <div class="w-1/2">
     <contest-select
       class="max-h-[90vh]"
-      [overview]="gameOverview()"
+      [poll]="pollChecked()"
       (selectGame)="onSelectGame($event)"
     ></contest-select>
   </div>

@@ -18,13 +18,21 @@ export class GameRunHttpService {
     return this.http.post<GridResultDto>('http://localhost:8080/api/game/run/versus', formData);
   }
 
-  runBattleRoyale(file: File) {
+  runBattle(file: File) {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<GridResultDto>('http://localhost:8080/api/game/run/battle', formData);
   }
 
-  runContest() {
-    return this.http.post<void>('http://localhost:8080/api/game/run/contest', null);
+  runSoloContest() {
+    return this.http.post<void>('http://localhost:8080/api/game/run/solo/contest', null);
+  }
+
+  runVersusContest() {
+    return this.http.post<void>('http://localhost:8080/api/game/run/versus/contest', null);
+  }
+
+  runBattleContest() {
+    return this.http.post<void>('http://localhost:8080/api/game/run/battle/contest', null);
   }
 }

@@ -9,15 +9,16 @@ import com.anthoxo.hackhaton.services.game.GridService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @Service
 public class ContestService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContestService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+        ContestService.class);
 
     private final GridService gridService;
     private final GridRepository gridRepository;
@@ -27,10 +28,10 @@ public class ContestService {
     private final BattleContestService battleContestService;
 
     public ContestService(GridService gridService,
-            GridRepository gridRepository,
-            UserService userService,
-            SoloContestService soloContestService,
-            VersusContestService versusContestService,
+        GridRepository gridRepository,
+        UserService userService,
+        SoloContestService soloContestService,
+        VersusContestService versusContestService,
         BattleContestService battleContestService) {
         this.gridService = gridService;
         this.gridRepository = gridRepository;
@@ -40,18 +41,32 @@ public class ContestService {
         this.battleContestService = battleContestService;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void runContest() {
-        LOGGER.info("Start computing contest!!");
+    public void runSoloContest() {
+        LOGGER.info("Start solo contest!!");
+        runContest(this::runForSolo);
+        LOGGER.info("End solo contest!!");
+    }
+
+    public void runVersusContest() {
+        LOGGER.info("Start versus contest!!");
+        runContest(this::runForVersus);
+        LOGGER.info("End versus contest!!");
+    }
+
+    public void runBattleContest() {
+        LOGGER.info("Start battle contest!!");
+        runContest(this::runForBattle);
+        LOGGER.info("End battle contest!!");
+    }
+
+    private void runContest(
+        BiConsumer<List<User>, List<GridEntity>> biConsumer) {
         initGrids();
 
         List<GridEntity> gridEntities = gridRepository.findAll();
         List<User> users = userService.getAll();
 
-        runForSolo(users, gridEntities);
-        runForVersus(users, gridEntities);
-        runForBattle(users, gridEntities);
-        LOGGER.info("End computing contest!!");
+        biConsumer.accept(users, gridEntities);
     }
 
     private void initGrids() {
@@ -68,16 +83,16 @@ public class ContestService {
     private void runForSolo(List<User> users, List<GridEntity> gridEntities) {
         Collections.shuffle(gridEntities);
         soloContestService.run(users, gridEntities
-                .stream()
-                .limit(6)
-                .toList());
+            .stream()
+            .limit(12)
+            .toList());
     }
 
     private void runForVersus(List<User> users, List<GridEntity> gridEntities) {
         Collections.shuffle(gridEntities);
         versusContestService.run(users, gridEntities
             .stream()
-            .limit(4)
+            .limit(8)
             .toList());
     }
 
@@ -85,7 +100,7 @@ public class ContestService {
         Collections.shuffle(gridEntities);
         battleContestService.run(users, gridEntities
             .stream()
-            .limit(4)
+            .limit(8)
             .toList());
     }
 }

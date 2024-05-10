@@ -1,14 +1,12 @@
-import { Component, HostBinding, signal, Signal } from '@angular/core';
+import { Component, HostBinding, signal } from '@angular/core';
 import { GameRunHttpService } from '../services/game-run-http.service';
 import { MatButtonModule } from '@angular/material/button';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { GameHttpService } from '../services/game-http.service';
-import { GameOverviewDto } from '../models/game-overview.model';
 import { ContestSelectComponent } from './select/contest-select.component';
 import { GridResultDto } from '../models/grid.model';
 import { ContestLadderComponent } from './ladder/contest-ladder.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ContestDialogComponent } from './dialog/contest-dialog.component';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'contest',
@@ -16,6 +14,7 @@ import { ContestDialogComponent } from './dialog/contest-dialog.component';
   standalone: true,
   imports: [
     MatButtonModule,
+    MatSlideToggle,
     ContestSelectComponent,
     ContestLadderComponent
   ]
@@ -24,22 +23,22 @@ export class ContestComponent {
   @HostBinding('class.w-full') wFull = true;
   @HostBinding('class.h-full') hFull = true;
 
-  gameOverview: Signal<GameOverviewDto> = toSignal(this.gameHttpService.getAll(), {
-    initialValue: {
-      soloGames: [],
-      versusGames: [],
-      battleGames: []
-    }
-  });
+  pollChecked = signal(false);
   gridResultDto = signal<GridResultDto | undefined>(undefined);
 
-  constructor(private gameRunHttpService: GameRunHttpService,
-              private gameHttpService: GameHttpService,
-              private dialog: MatDialog) {
+  constructor(private gameRunHttpService: GameRunHttpService, private dialog: MatDialog) {
   }
 
-  runContest() {
-    this.gameRunHttpService.runContest().subscribe(() => console.log('yes!'));
+  runContest(mode: 'SOLO' | 'VERSUS' | 'BATTLE') {
+    if (mode === 'SOLO') {
+      this.gameRunHttpService.runSoloContest().subscribe();
+    }
+    if (mode === 'VERSUS') {
+      this.gameRunHttpService.runVersusContest().subscribe();
+    }
+    if (mode === 'BATTLE') {
+      this.gameRunHttpService.runBattleContest().subscribe();
+    }
   }
 
   onSelectGame(data: { gameId: number; mode: 'SOLO' | 'VERSUS' | 'BATTLE' }) {

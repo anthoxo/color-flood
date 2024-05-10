@@ -40,7 +40,7 @@ export class BattleRoyaleComponent {
     const file = this.file();
     if (file !== undefined) {
       this.loading.set(true);
-      this.gameRunHttpService.runBattleRoyale(file)
+      this.gameRunHttpService.runBattle(file)
         .subscribe({
           next: (dto) => {
             this.gridResultDto.set(dto);
