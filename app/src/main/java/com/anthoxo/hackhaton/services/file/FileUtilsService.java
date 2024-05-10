@@ -1,5 +1,6 @@
 package com.anthoxo.hackhaton.services.file;
 
+import com.anthoxo.hackhaton.models.LanguageExtension;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,5 +42,10 @@ public class FileUtilsService {
 
     public void deleteFile(File file) {
         file.delete();
+    }
+
+    public LanguageExtension getExtensionOrThrow(String filename) {
+        String extension = filename.substring(filename.lastIndexOf(".") + 1);
+        return LanguageExtension.getExtension(extension).orElseThrow();
     }
 }
