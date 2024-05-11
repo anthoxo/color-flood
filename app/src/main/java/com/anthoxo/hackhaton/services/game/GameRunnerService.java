@@ -86,6 +86,8 @@ public class GameRunnerService {
             List<String> lines = gridService.getFormatGridForProgram(
                 rotatedGrid);
             try {
+                String unknown = "NONE";
+                write(process, unknown);
                 for (String line : lines) {
                     write(process, line);
                 }
