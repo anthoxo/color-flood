@@ -23,8 +23,7 @@ public class GameRunnerService {
 
     public static final String RANDOM_LOCATION = "src/main/resources/examples/RandomExample.java";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(
-        GameRunnerService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameRunnerService.class);
 
     private final GridService gridService;
     private final FileUtilsService fileUtilsService;

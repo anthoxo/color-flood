@@ -40,10 +40,6 @@ public class SoloRunService {
         this.soloRunRepository = soloRunRepository;
     }
 
-    public void ss() {
-        System.out.println("bb");
-    }
-
     public GridResultDto run(MultipartFile multipartFile)
             throws GameCancelledException {
         File file = fileUtilsService.generateTmpFile(multipartFile);

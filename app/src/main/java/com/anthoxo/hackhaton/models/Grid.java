@@ -32,16 +32,9 @@ public record Grid(List<List<Integer>> colors) {
             }
             passed.add(passedRow);
         }
-        switch (startingTile) {
-            case TOP_LEFT -> color(0, 0, previousColor, newColor, passed);
-            case BOTTOM_RIGHT ->
-                    color(colors.size() - 1, colors.size() - 1, previousColor,
-                            newColor, passed);
-            case BOTTOM_LEFT -> color(colors.size() - 1, 0, previousColor, newColor, passed);
-            case TOP_RIGHT ->
-                    color(0, colors.size() - 1, previousColor,
-                            newColor, passed);
-        }
+        int startRow = startingTile.getRow(colors.size());
+        int startCol = startingTile.getCol(colors.size());
+        color(startRow, startCol, previousColor, newColor, passed);
     }
 
     private void color(int row, int col, int previousColor, int newColor,
@@ -72,11 +65,8 @@ public record Grid(List<List<Integer>> colors) {
 
     public Integer getCurrentColor(StartingTile startingTile) {
         int size = colors.size();
-        return switch (startingTile) {
-            case TOP_LEFT -> colors().get(0).get(0);
-            case BOTTOM_RIGHT -> colors().get(size - 1).get(size - 1);
-            case BOTTOM_LEFT -> colors().get(size-1).get(0);
-            case TOP_RIGHT -> colors().get(0).get(size-1);
-        };
+        int row = startingTile.getRow(size);
+        int col = startingTile.getCol(size);
+        return colors.get(row).get(col);
     }
 }

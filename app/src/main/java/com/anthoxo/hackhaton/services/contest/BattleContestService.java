@@ -36,9 +36,9 @@ public class BattleContestService {
 
     public void run(List<User> users, List<GridEntity> gridEntities) {
         List<User> shuffledUsers = new ArrayList<>(users);
-        Collections.shuffle(shuffledUsers);
 
         for (GridEntity gridEntity : gridEntities) {
+            Collections.shuffle(shuffledUsers);
             for (int i1 = 0; i1 < shuffledUsers.size(); i1++) {
                 User user1 = shuffledUsers.get(i1);
 
@@ -90,7 +90,7 @@ public class BattleContestService {
             BattleRun battleRun = new BattleRun(
                 gridEntity,
                 user1, user2, user3, user4,
-                List.of("0")
+                List.of()
             );
             battleRunRepository.save(battleRun);
             eloService.computeLossElo(battleRun);

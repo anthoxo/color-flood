@@ -38,8 +38,8 @@ public class VersusContestService {
 
     public void run(List<User> users, List<GridEntity> gridEntities) {
         List<User> shuffledUsers = new ArrayList<>(users);
-        Collections.shuffle(shuffledUsers);
         for (GridEntity gridEntity : gridEntities) {
+            Collections.shuffle(shuffledUsers);
             for (int i = 0; i < shuffledUsers.size(); i++) {
                 User user1 = shuffledUsers.get(i);
                 for (int j = i + 1; j < shuffledUsers.size(); j++) {

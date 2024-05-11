@@ -7,14 +7,12 @@ public final class Player {
     private final String name;
     private final StartingTile startingTile;
     private final String pathFile;
-    private int currentColor;
     private boolean isGameOver = false;
 
     public Player(String name, StartingTile startingTile, String pathFile) {
         this.name = name;
         this.startingTile = startingTile;
         this.pathFile = pathFile;
-        this.currentColor = -1;
     }
 
     public String name() {
@@ -26,10 +24,7 @@ public final class Player {
     }
 
     public int currentColor(Grid grid) {
-        if (currentColor == -1) {
-            return grid.getCurrentColor(startingTile);
-        }
-        return currentColor;
+        return grid.getCurrentColor(startingTile);
     }
 
     public String pathFile() {
@@ -54,21 +49,19 @@ public final class Player {
         }
         var that = (Player) obj;
         return Objects.equals(this.name, that.name) &&
-                Objects.equals(this.startingTile, that.startingTile) &&
-                this.currentColor == that.currentColor;
+                Objects.equals(this.startingTile, that.startingTile);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, startingTile, currentColor);
+        return Objects.hash(name, startingTile);
     }
 
     @Override
     public String toString() {
         return "Player[" +
                 "name=" + name + ", " +
-                "startingTile=" + startingTile + ", " +
-                "color=" + currentColor + ']';
+                "startingTile=" + startingTile + ']';
     }
 
 }

@@ -2,7 +2,6 @@ package com.anthoxo.hackhaton.services.ladder;
 
 import com.anthoxo.hackhaton.dtos.GridResultDto;
 import com.anthoxo.hackhaton.entities.*;
-import com.anthoxo.hackhaton.models.Grid;
 import com.anthoxo.hackhaton.models.StartingTile;
 import com.anthoxo.hackhaton.repositories.LadderRepository;
 import com.anthoxo.hackhaton.services.game.GameResolverService;
@@ -32,14 +31,13 @@ public class EloService {
         }
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(
-        EloService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EloService.class);
+
     private static final BiFunction<Run, Ladder, Double> GET_ELO_FUNCTION = (run, ladder) -> switch (run) {
         case SoloRun ignored -> ladder.getSoloElo();
         case VersusRun ignored -> ladder.getVersusElo();
         case BattleRun ignored -> ladder.getBattleElo();
     };
-
 
     private final LadderRepository ladderRepository;
     private final GameResolverService gameResolverService;
@@ -75,14 +73,6 @@ public class EloService {
                     soloRun1,
                     ladder1.getSoloElo()
                 );
-                LOGGER.info(
-                    "(solo) ELO => player1={}, nbMoves={}, eloChange={}, elo={}",
-                    soloRun1.getUser().getTeamName(),
-                    soloRun1.getMoves().size(), elo1, ladder1.getSoloElo());
-                LOGGER.info(
-                    "(solo) ELO => player2={}, nbMoves={}, eloChange={}, elo={}",
-                    soloRun2.getUser().getTeamName(),
-                    soloRun2.getMoves().size(), elo2, ladder2.getSoloElo());
                 ladder1.addSoloChange(elo1);
                 ladder2.addSoloChange(elo2);
                 ladderRepository.save(ladder1);
@@ -164,7 +154,6 @@ public class EloService {
                     stat1,
                     GET_ELO_FUNCTION.apply(run, ladder1)
                 );
-
                 switch (run) {
                     case SoloRun ignored -> {
                         ladder1.addSoloChange(elo1);
@@ -179,12 +168,6 @@ public class EloService {
                         ladder2.addBattleChange(elo2);
                     }
                 }
-                LOGGER.info("ELO => player1={}, rank={}, eloChange={}, elo={}",
-                    user1.getTeamName(), stat1.rank(), elo1,
-                    GET_ELO_FUNCTION.apply(run, ladder1));
-                LOGGER.info("ELO => player2={}, rank={}, eloChange={}, elo={}",
-                    user2.getTeamName(), stat2.rank(), elo2,
-                    GET_ELO_FUNCTION.apply(run, ladder2));
                 ladderRepository.save(ladder1);
                 ladderRepository.save(ladder2);
             }
@@ -212,16 +195,12 @@ public class EloService {
                 Ladder ladder2 = ladderRepository.findByUser(user2)
                     .orElseGet(() -> new Ladder(user2));
 
-                double elo1 = computeElo(
-                    stat1,
+                double elo1 = computeLossElo(
                     GET_ELO_FUNCTION.apply(run, ladder1),
-                    stat2,
                     GET_ELO_FUNCTION.apply(run, ladder2)
                 );
-                double elo2 = computeElo(
-                    stat2,
+                double elo2 = computeLossElo(
                     GET_ELO_FUNCTION.apply(run, ladder2),
-                    stat1,
                     GET_ELO_FUNCTION.apply(run, ladder1)
                 );
                 switch (run) {
@@ -274,6 +253,13 @@ public class EloService {
     ) {
         return computeElo(myElo, opponentElo,
             getMatchResult(soloRun1, soloRun2));
+    }
+
+    private double computeLossElo(
+        double myElo,
+        double opponentElo
+    ) {
+        return computeElo(myElo, opponentElo, MatchResult.LOSE);
     }
 
     private long getNumberOfTiles(SoloRun soloRun) {
