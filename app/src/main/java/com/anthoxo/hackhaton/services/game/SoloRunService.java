@@ -40,27 +40,35 @@ public class SoloRunService {
         this.soloRunRepository = soloRunRepository;
     }
 
+    public void ss() {
+        System.out.println("bb");
+    }
+
     public GridResultDto run(MultipartFile multipartFile)
             throws GameCancelledException {
         File file = fileUtilsService.generateTmpFile(multipartFile);
 
-        Grid initialGrid = gridService.init(2);
-        Player playerOne = new Player(
-                "local",
-                StartingTile.TOP_LEFT,
-                file.getPath()
-        );
-        Game game = new Game(List.of(playerOne), initialGrid);
-
         try {
-            gameRunnerService.run(game);
+            return run(file, false);
         } finally {
             fileUtilsService.deleteFile(file);
         }
+    }
+
+    public GridResultDto run(File file, boolean shouldSaveErrorFile) throws GameCancelledException {
+        Grid initialGrid = gridService.init(2);
+        Player playerOne = new Player(
+            "local",
+            StartingTile.TOP_LEFT,
+            file.getPath()
+        );
+        Game game = new Game(List.of(playerOne), initialGrid);
+
+        gameRunnerService.run(game, shouldSaveErrorFile);
 
         return new GridResultDto(
-                game.getHistory(),
-                gameStatisticsService.getStatistics(game)
+            game.getHistory(),
+            gameStatisticsService.getStatistics(game)
         );
     }
 

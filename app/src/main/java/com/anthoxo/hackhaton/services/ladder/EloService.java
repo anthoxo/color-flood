@@ -18,6 +18,20 @@ import java.util.function.Function;
 @Service
 public class EloService {
 
+    private enum MatchResult {
+        WIN(1), LOSE(0), DRAW(0.5);
+
+        private double score;
+
+        MatchResult(double score) {
+            this.score = score;
+        }
+
+        public double getScore() {
+            return score;
+        }
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(
         EloService.class);
     private static final BiFunction<Run, Ladder, Double> GET_ELO_FUNCTION = (run, ladder) -> switch (run) {
@@ -44,28 +58,22 @@ public class EloService {
             SoloRun soloRun1 = soloRuns.get(i);
             Ladder ladder1 = ladderRepository.findByUser(soloRun1.getUser())
                 .orElseGet(() -> new Ladder(soloRun1.getUser()));
-            boolean playerOneHasFinished = hasFinished(soloRun1);
             for (int j = i + 1; j < soloRuns.size(); j++) {
                 SoloRun soloRun2 = soloRuns.get(j);
                 Ladder ladder2 = ladderRepository.findByUser(soloRun2.getUser())
                     .orElseGet(() -> new Ladder(soloRun2.getUser()));
-                boolean playerTwoHasFinished = hasFinished(soloRun2);
 
                 double elo1 = computeElo(
-                    soloRun1.getMoves().size(),
+                    soloRun1,
                     ladder1.getSoloElo(),
-                    playerOneHasFinished,
-                    soloRun2.getMoves().size(),
-                    ladder2.getSoloElo(),
-                    playerTwoHasFinished
+                    soloRun2,
+                    ladder2.getSoloElo()
                 );
                 double elo2 = computeElo(
-                    soloRun2.getMoves().size(),
+                    soloRun2,
                     ladder2.getSoloElo(),
-                    playerTwoHasFinished,
-                    soloRun1.getMoves().size(),
-                    ladder1.getSoloElo(),
-                    playerOneHasFinished
+                    soloRun1,
+                    ladder1.getSoloElo()
                 );
                 LOGGER.info(
                     "(solo) ELO => player1={}, nbMoves={}, eloChange={}, elo={}",
@@ -145,15 +153,15 @@ public class EloService {
                     .orElseGet(() -> new Ladder(user2));
 
                 double elo1 = computeElo(
-                    stat1.rank(),
+                    stat1,
                     GET_ELO_FUNCTION.apply(run, ladder1),
-                    stat2.rank(),
+                    stat2,
                     GET_ELO_FUNCTION.apply(run, ladder2)
                 );
                 double elo2 = computeElo(
-                    stat2.rank(),
+                    stat2,
                     GET_ELO_FUNCTION.apply(run, ladder2),
-                    stat1.rank(),
+                    stat1,
                     GET_ELO_FUNCTION.apply(run, ladder1)
                 );
 
@@ -205,20 +213,16 @@ public class EloService {
                     .orElseGet(() -> new Ladder(user2));
 
                 double elo1 = computeElo(
-                    stat1.rank(),
+                    stat1,
                     GET_ELO_FUNCTION.apply(run, ladder1),
-                    false,
-                    stat2.rank(),
-                    GET_ELO_FUNCTION.apply(run, ladder2),
-                    false
+                    stat2,
+                    GET_ELO_FUNCTION.apply(run, ladder2)
                 );
                 double elo2 = computeElo(
-                    stat2.rank(),
+                    stat2,
                     GET_ELO_FUNCTION.apply(run, ladder2),
-                    false,
-                    stat1.rank(),
-                    GET_ELO_FUNCTION.apply(run, ladder1),
-                    false
+                    stat1,
+                    GET_ELO_FUNCTION.apply(run, ladder1)
                 );
                 switch (run) {
                     case SoloRun ignored -> {
@@ -241,40 +245,72 @@ public class EloService {
     }
 
     private double computeElo(
-        int moves1,
         double myElo,
-        boolean oneHasFinished,
-        int moves2,
         double opponentElo,
-        boolean twoHasFinished
+        MatchResult matchResult
     ) {
         double difference = (opponentElo - myElo) / 400.;
         double tenRaisedPower = Math.pow(10, difference) + 1;
         double expected = 1 / tenRaisedPower;
-        double score = 0;
-        if (!oneHasFinished) {
-            score = 0;
-        } else if (moves1 < moves2 || !twoHasFinished) {
-            score = 1;
-        } else if (moves1 == moves2) {
-            score = 0.5;
-        }
+        double score = matchResult.getScore();
         double K = 32;
         return K * (score - expected);
     }
 
     private double computeElo(
-        int rank1,
+        GridResultDto.Statistic stat1,
         double myElo,
-        int rank2,
+        GridResultDto.Statistic stat2,
         double opponentElo
     ) {
-        return computeElo(rank1, myElo, true, rank2, opponentElo, true);
+        return computeElo(myElo, opponentElo, getMatchResult(stat1, stat2));
     }
 
-    private boolean hasFinished(SoloRun soloRun) {
-        List<Grid> history = gameResolverService.resolve(soloRun).history();
-        return !history.isEmpty() &&
-            history.get(history.size() - 1).getNumberOfColors() == 1;
+    private double computeElo(
+        SoloRun soloRun1,
+        double myElo,
+        SoloRun soloRun2,
+        double opponentElo
+    ) {
+        return computeElo(myElo, opponentElo,
+            getMatchResult(soloRun1, soloRun2));
+    }
+
+    private long getNumberOfTiles(SoloRun soloRun) {
+        return gameResolverService.resolve(soloRun)
+            .statistics()
+            .getFirst()
+            .tileNumber();
+    }
+
+    private MatchResult getMatchResult(GridResultDto.Statistic stat1,
+        GridResultDto.Statistic stat2) {
+        return getMatchResult(stat1.rank(), stat2.rank());
+    }
+
+    private MatchResult getMatchResult(long rank1, long rank2) {
+        if (rank1 < rank2) {
+            return MatchResult.WIN;
+        }
+        if (rank1 > rank2) {
+            return MatchResult.LOSE;
+        }
+        return MatchResult.DRAW;
+
+    }
+
+    private MatchResult getMatchResult(SoloRun soloRun1, SoloRun soloRun2) {
+        long playerOneNumberOfTiles = getNumberOfTiles(soloRun1);
+        long playerTwoNumberOfTiles = getNumberOfTiles(soloRun2);
+
+        if (playerOneNumberOfTiles < playerTwoNumberOfTiles) {
+            return MatchResult.LOSE;
+        }
+
+        if (playerOneNumberOfTiles > playerTwoNumberOfTiles) {
+            return MatchResult.WIN;
+        }
+
+        return getMatchResult(soloRun1.getMoves().size(), soloRun2.getMoves().size());
     }
 }

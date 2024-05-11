@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
@@ -31,13 +32,21 @@ public class GameRunnerService {
     }
 
     public void run(Game game) throws GameCancelledException {
+        run(game, false);
+    }
+
+    public void run(Game game, boolean shouldSaveErrorFile) throws GameCancelledException {
         List<Process> processes = game.getPlayers().stream()
             .map(player -> {
                 ProcessBuilder processBuilder = new ProcessBuilder(
                     fileUtilsService.getExtensionOrThrow(player.pathFile())
                         .getCommandRunner(),
                     player.pathFile());
-                processBuilder.redirectErrorStream(true);
+                if (shouldSaveErrorFile) {
+                    processBuilder.redirectError(new File("error.txt"));
+                } else {
+                    processBuilder.redirectErrorStream(true);
+                }
                 try {
                     return processBuilder.start();
                 } catch (IOException e) {

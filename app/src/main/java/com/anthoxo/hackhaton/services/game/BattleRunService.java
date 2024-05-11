@@ -36,6 +36,15 @@ public class BattleRunService {
         throws GameCancelledException {
         File file = fileUtilsService.generateTmpFile(multipartFile);
 
+        try {
+            return runAlone(file, false);
+        } finally {
+            fileUtilsService.deleteFile(file);
+        }
+    }
+
+    public GridResultDto runAlone(File file, boolean shouldSaveErrorFile)
+        throws GameCancelledException {
         Grid initialGrid = gridService.init(6);
         Player playerOne = new Player(
             "local-1",
@@ -61,11 +70,7 @@ public class BattleRunService {
             List.of(playerOne, playerTwo, playerThree, playerFour),
             initialGrid);
 
-        try {
-            gameRunnerService.run(game);
-        } finally {
-            fileUtilsService.deleteFile(file);
-        }
+        gameRunnerService.run(game, shouldSaveErrorFile);
 
         return new GridResultDto(
             game.getHistory(),

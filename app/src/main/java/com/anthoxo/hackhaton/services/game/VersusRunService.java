@@ -35,7 +35,15 @@ public class VersusRunService {
     public GridResultDto runWithRandom(MultipartFile multipartFile)
             throws GameCancelledException {
         File file = fileUtilsService.generateTmpFile(multipartFile);
+        try {
+            return runWithRandom(file, false);
+        } finally {
+            fileUtilsService.deleteFile(file);
+        }
+    }
 
+    public GridResultDto runWithRandom(File file, boolean shouldSaveErrorFile)
+            throws GameCancelledException {
         Grid initialGrid = gridService.init(4);
         Player playerOne = new Player(
                 "local-1",
@@ -49,11 +57,7 @@ public class VersusRunService {
         );
         Game game = new Game(List.of(playerOne, playerTwo), initialGrid);
 
-        try {
-            gameRunnerService.run(game);
-        } finally {
-            fileUtilsService.deleteFile(file);
-        }
+        gameRunnerService.run(game, shouldSaveErrorFile);
 
         return new GridResultDto(
                 game.getHistory(),
