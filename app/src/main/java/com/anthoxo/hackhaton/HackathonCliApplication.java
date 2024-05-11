@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.io.File;
 
-@SpringBootApplication
+//@SpringBootApplication
 public class HackathonCliApplication implements CommandLineRunner {
 
     private static Logger LOG = LoggerFactory
@@ -39,7 +39,7 @@ public class HackathonCliApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
         LOG.info("STARTING THE APPLICATION");
-        SpringApplication.run(HackathonCliApplication.class, args);
+//        SpringApplication.run(HackathonCliApplication.class, args);
         LOG.info("APPLICATION FINISHED");
     }
 

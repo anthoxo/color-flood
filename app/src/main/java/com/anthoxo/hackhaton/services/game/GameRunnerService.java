@@ -1,5 +1,6 @@
 package com.anthoxo.hackhaton.services.game;
 
+import com.anthoxo.hackhaton.exceptions.AnswerTooLongException;
 import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Game;
 import com.anthoxo.hackhaton.models.Grid;
@@ -16,6 +17,9 @@ import java.util.Scanner;
 
 @Service
 public class GameRunnerService {
+
+    private static final double MAXIMUM_TIME_FOR_ANSWER_IN_MS = 110;
+    private static final double MAXIMUM_TIME_FOR_ANSWER_AT_BEGINNING_IN_MS = 1100;
 
     public static final String RANDOM_LOCATION = "src/main/resources/examples/RandomExample.java";
 
@@ -43,9 +47,9 @@ public class GameRunnerService {
                         .getCommandRunner(),
                     player.pathFile());
                 if (shouldSaveErrorFile) {
-                    processBuilder.redirectError(new File("error.txt"));
-                } else {
                     processBuilder.redirectErrorStream(true);
+                } else {
+                    processBuilder.redirectError(new File("error.txt"));
                 }
                 try {
                     return processBuilder.start();
@@ -93,8 +97,17 @@ public class GameRunnerService {
                 turn++;
                 continue;
             }
+            long start = System.nanoTime();
             try {
                 String answer = scanner.nextLine();
+                double elapsedTimeInMs = (System.nanoTime() - start) / 1e6;
+                if (
+                    (turn > 4 && elapsedTimeInMs > MAXIMUM_TIME_FOR_ANSWER_IN_MS) ||
+                        elapsedTimeInMs > MAXIMUM_TIME_FOR_ANSWER_AT_BEGINNING_IN_MS
+                ) {
+                    throw new AnswerTooLongException("Answer takes too long (" + elapsedTimeInMs + "ms).");
+                }
+                LOGGER.info("time={}ms", elapsedTimeInMs);
                 Integer res = Integer.valueOf(answer);
                 game.run(turn, res);
             } catch (Exception ex) {
