@@ -39,7 +39,8 @@ public class GameRunnerService {
         run(game, false);
     }
 
-    public void run(Game game, boolean shouldSaveErrorFile) throws GameCancelledException {
+    public void run(Game game, boolean shouldSaveErrorFile)
+        throws GameCancelledException {
         List<Process> processes = game.getPlayers().stream()
             .map(player -> {
                 ProcessBuilder processBuilder = new ProcessBuilder(
@@ -47,9 +48,9 @@ public class GameRunnerService {
                         .getCommandRunner(),
                     player.pathFile());
                 if (shouldSaveErrorFile) {
-                    processBuilder.redirectErrorStream(true);
-                } else {
                     processBuilder.redirectError(new File("error.txt"));
+                } else {
+                    processBuilder.redirectErrorStream(true);
                 }
                 try {
                     return processBuilder.start();
@@ -101,17 +102,12 @@ public class GameRunnerService {
             try {
                 String answer = scanner.nextLine();
                 double elapsedTimeInMs = (System.nanoTime() - start) / 1e6;
-                if (
-                    (turn > 4 && elapsedTimeInMs > MAXIMUM_TIME_FOR_ANSWER_IN_MS) ||
-                        elapsedTimeInMs > MAXIMUM_TIME_FOR_ANSWER_AT_BEGINNING_IN_MS
-                ) {
-                    throw new AnswerTooLongException("Answer takes too long (" + elapsedTimeInMs + "ms).");
-                }
-                LOGGER.info("time={}ms", elapsedTimeInMs);
+                throwExceptionIfTooLong(turn, elapsedTimeInMs);
                 Integer res = Integer.valueOf(answer);
                 game.run(turn, res);
             } catch (Exception ex) {
-                LOGGER.error("Something happens for the player={}, ex={}", game.getCurrentPlayer(turn), ex.getMessage());
+                LOGGER.error("Something happens for the player={}, ex={}",
+                    game.getCurrentPlayer(turn), ex.getMessage());
                 game.gameOver(turn);
             }
             if (game.isFinished()) {
@@ -137,5 +133,17 @@ public class GameRunnerService {
     private void write(Process process, String text) throws IOException {
         process.outputWriter().write(text + "\n");
         process.outputWriter().flush();
+    }
+
+    private void throwExceptionIfTooLong(int turn, double elapsedTimeInMs)
+        throws AnswerTooLongException {
+        if (
+            (turn > 4 && elapsedTimeInMs > MAXIMUM_TIME_FOR_ANSWER_IN_MS) ||
+                elapsedTimeInMs > MAXIMUM_TIME_FOR_ANSWER_AT_BEGINNING_IN_MS
+        ) {
+            throw new AnswerTooLongException(
+                "Answer takes too long (" + elapsedTimeInMs + "ms).");
+        }
+
     }
 }
