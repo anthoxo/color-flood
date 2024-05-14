@@ -69,4 +69,12 @@ public record Grid(List<List<Integer>> colors) {
         int col = startingTile.getCol(size);
         return colors.get(row).get(col);
     }
+
+    public long countTiles(Player player) {
+        Integer currentColor = getCurrentColor(player.startingTile());
+        return colors().stream()
+            .flatMap(List::stream)
+            .filter(i -> currentColor == i)
+            .count();
+    }
 }

@@ -9,12 +9,12 @@ public class RandomExample {
         int numberOfPlayers = in.nextInt();
 
         while (true) {
-            String unknown1 = in.nextLine();
-            String unknown2 = in.nextLine();
+            String cursed = in.nextLine(); // NONE, ZAP, SHIELD, SHADOW
+            String jokers = in.nextLine(); // (ZAP, SHIELD, SHADOW, ARCANE_THEFT) or NONE
             for (int i = 0; i < size; ++i) {
                 String nextLine = in.nextLine();
             }
-            System.out.println(rand.nextInt(10));
+            System.out.println(rand.nextInt(10) + " ZAP");
         }
     }
 }

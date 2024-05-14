@@ -18,8 +18,7 @@ public class GameStatisticsService {
         List<ShortStatistic> shortStatistics = game.getPlayers()
                 .stream()
                 .map(player -> {
-                    int tileNumber = (int) countTiles(grid,
-                            player.currentColor(grid));
+                    int tileNumber = (int) grid.countTiles(player);
                     return new ShortStatistic(
                             player.name(),
                             player.currentColor(grid),
@@ -42,13 +41,6 @@ public class GameStatisticsService {
                     );
                 })
                 .toList();
-    }
-
-    private long countTiles(Grid grid, int color) {
-        return grid.colors().stream()
-                .flatMap(List::stream)
-                .filter(i -> color == i)
-                .count();
     }
 
     private record ShortStatistic(String name, int finalColor, int tileNumber,

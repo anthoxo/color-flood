@@ -86,15 +86,15 @@ public class GameRunnerService {
             }
             Process process = processes.get(turn % game.getPlayers().size());
             Scanner scanner = new Scanner(process.getInputStream());
-            Grid rotatedGrid = gridService.rotateGridIfNeeded(game.getGrid(),
+            Grid rotatedGrid = gridService.rotateGridIfNeeded(game.getGrid(player),
                 player.startingTile());
             List<String> lines = gridService.getFormatGridForProgram(
                 rotatedGrid);
             try {
-                String unknown = "NONE";
-                write(process, unknown);
-                String unknown2 = "NONE";
-                write(process, unknown2);
+                String cursed = player.getCursedJoker().name();
+                write(process, cursed);
+                String jokers = player.getJokersForProgram();
+                write(process, jokers);
                 for (String line : lines) {
                     write(process, line);
                 }
@@ -113,11 +113,10 @@ public class GameRunnerService {
                 ).get(2, TimeUnit.SECONDS);
                 double elapsedTimeInMs = (System.nanoTime() - start) / 1e6;
                 throwExceptionIfTooLong(turn, elapsedTimeInMs);
-                Integer res = Integer.valueOf(answer);
-                game.run(turn, res);
+                game.run(turn, answer);
             } catch (Exception ex) {
                 LOGGER.error("Something happens for the player={}, turn={}, ex={}",
-                    game.getCurrentPlayer(turn), turn, ex.getMessage());
+                    game.getCurrentPlayer(turn), turn, ex);
                 game.gameOver(turn);
             }
             if (game.isFinished()) {
