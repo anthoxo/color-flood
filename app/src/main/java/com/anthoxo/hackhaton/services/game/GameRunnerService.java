@@ -93,6 +93,8 @@ public class GameRunnerService {
             try {
                 String unknown = "NONE";
                 write(process, unknown);
+                String unknown2 = "NONE";
+                write(process, unknown2);
                 for (String line : lines) {
                     write(process, line);
                 }

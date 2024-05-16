@@ -9,6 +9,8 @@ public class RandomExample {
         int numberOfPlayers = in.nextInt();
 
         while (true) {
+            String unknown1 = in.nextLine();
+            String unknown2 = in.nextLine();
             for (int i = 0; i < size; ++i) {
                 String nextLine = in.nextLine();
             }

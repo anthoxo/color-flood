@@ -8,6 +8,8 @@ import random
 size = int(input())
 numberOfPlayers = int(input())
 while True:
+    unknown1 = input()
+    unknown2 = input()
     for i in range(size):
         nextLine = input() # line
     print(random.randint(0,9))
