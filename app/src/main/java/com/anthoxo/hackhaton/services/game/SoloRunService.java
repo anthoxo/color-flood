@@ -5,10 +5,7 @@ import com.anthoxo.hackhaton.entities.GridEntity;
 import com.anthoxo.hackhaton.entities.SoloRun;
 import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.exceptions.GameCancelledException;
-import com.anthoxo.hackhaton.models.Game;
-import com.anthoxo.hackhaton.models.Grid;
-import com.anthoxo.hackhaton.models.Player;
-import com.anthoxo.hackhaton.models.StartingTile;
+import com.anthoxo.hackhaton.models.*;
 import com.anthoxo.hackhaton.repositories.SoloRunRepository;
 import com.anthoxo.hackhaton.services.file.FileUtilsService;
 import org.springframework.stereotype.Service;
@@ -83,8 +80,8 @@ public class SoloRunService {
     }
 
     @Transactional
-    public void save(User user, GridEntity gridEntity, List<String> moves) {
-        SoloRun soloRun = new SoloRun(user, gridEntity, moves);
+    public void save(User user, GridEntity gridEntity, List<String> moves, List<Joker> jokers) {
+        SoloRun soloRun = new SoloRun(user, gridEntity, moves, jokers);
         soloRunRepository.save(soloRun);
     }
 

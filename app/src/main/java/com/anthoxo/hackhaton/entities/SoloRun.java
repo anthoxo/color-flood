@@ -1,6 +1,8 @@
 package com.anthoxo.hackhaton.entities;
 
+import com.anthoxo.hackhaton.entities.converters.JokerConverter;
 import com.anthoxo.hackhaton.entities.converters.MoveConverter;
+import com.anthoxo.hackhaton.models.Joker;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -35,14 +37,18 @@ public final class SoloRun implements Run {
     @Column(name = "moves")
     private List<String> moves;
 
+    @Convert(converter = JokerConverter.class)
+    @Column(name = "jokers")
+    private List<Joker> jokers;
 
     public SoloRun() {
     }
 
-    public SoloRun(User user, GridEntity grid, List<String> moves) {
+    public SoloRun(User user, GridEntity grid, List<String> moves, List<Joker> jokers) {
         this.user = user;
         this.grid = grid;
         this.moves = moves;
+        this.jokers = jokers;
     }
 
     public Long getId() {
@@ -80,5 +86,13 @@ public final class SoloRun implements Run {
 
     public void setMoves(List<String> moves) {
         this.moves = moves;
+    }
+
+    public List<Joker> getJokers() {
+        return jokers;
+    }
+
+    public void setJokers(List<Joker> jokers) {
+        this.jokers = jokers;
     }
 }

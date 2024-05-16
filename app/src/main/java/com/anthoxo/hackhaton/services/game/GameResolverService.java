@@ -5,10 +5,7 @@ import com.anthoxo.hackhaton.entities.BattleRun;
 import com.anthoxo.hackhaton.entities.Run;
 import com.anthoxo.hackhaton.entities.SoloRun;
 import com.anthoxo.hackhaton.entities.VersusRun;
-import com.anthoxo.hackhaton.models.Game;
-import com.anthoxo.hackhaton.models.Grid;
-import com.anthoxo.hackhaton.models.Player;
-import com.anthoxo.hackhaton.models.StartingTile;
+import com.anthoxo.hackhaton.models.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,7 +36,7 @@ public class GameResolverService {
         );
         Grid grid = new Grid(soloRun.getGrid());
         Game game = new Game(List.of(player), grid);
-        resolve(game, soloRun.getMoves());
+        resolve(game, soloRun.getMoves(), soloRun.getJokers());
         return new GridResultDto(game.getHistory(), gameStatisticsService.getStatistics(game));
     }
 
@@ -56,7 +53,7 @@ public class GameResolverService {
         );
         Grid grid = new Grid(versusRun.getGrid());
         Game game = new Game(List.of(player1, player2), grid);
-        resolve(game, versusRun.getMoves());
+        resolve(game, versusRun.getMoves(), versusRun.getJokers());
         return new GridResultDto(game.getHistory(), gameStatisticsService.getStatistics(game));
     }
 
@@ -83,16 +80,16 @@ public class GameResolverService {
         );
         Grid grid = new Grid(battleRun.getGrid());
         Game game = new Game(List.of(player1, player2, player3, player4), grid);
-        resolve(game, battleRun.getMoves());
+        resolve(game, battleRun.getMoves(), battleRun.getJokers());
         return new GridResultDto(game.getHistory(), gameStatisticsService.getStatistics(game));
     }
 
     public List<String> computeMoves(GridResultDto gridResultDto) {
         int numberOfPlayers = gridResultDto.statistics().size();
-        List<Grid> history = gridResultDto.history();
+        List<EnrichedGrid> history = gridResultDto.history();
         List<String> moves = new ArrayList<>();
         for (int i = 0; i < history.size() - 1; i++) {
-            Grid grid = history.get(i+1);
+            Grid grid = history.get(i+1).grid();
             StartingTile startingTile = switch (i % numberOfPlayers) {
                 case 0 -> StartingTile.TOP_LEFT;
                 case 1 -> StartingTile.BOTTOM_RIGHT;
@@ -103,12 +100,20 @@ public class GameResolverService {
             moves.add(grid.getCurrentColor(startingTile).toString());
         }
         return moves;
-
     }
 
-    private void resolve(Game game, List<String> moves) {
+    public List<Joker> computeJokers(GridResultDto gridResultDto) {
+        return gridResultDto
+            .history()
+            .stream()
+            .skip(1)
+            .map(EnrichedGrid::usedJoker)
+            .toList();
+    }
+
+    private void resolve(Game game, List<String> moves, List<Joker> jokers) {
         for (int i = 0; i < moves.size(); i++) {
-            game.run(i, Integer.valueOf(moves.get(i)));
+            game.run(i, Integer.valueOf(moves.get(i)), jokers.get(i));
         }
     }
 }

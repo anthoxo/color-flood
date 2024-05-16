@@ -1,6 +1,8 @@
 package com.anthoxo.hackhaton.entities;
 
+import com.anthoxo.hackhaton.entities.converters.JokerConverter;
 import com.anthoxo.hackhaton.entities.converters.MoveConverter;
+import com.anthoxo.hackhaton.models.Joker;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -48,6 +50,10 @@ public final class BattleRun implements Run {
     @Column(name = "moves")
     private List<String> moves;
 
+    @Convert(converter = JokerConverter.class)
+    @Column(name = "jokers")
+    private List<Joker> jokers;
+
     public BattleRun() {
     }
 
@@ -57,7 +63,8 @@ public final class BattleRun implements Run {
         User bottomRightUser,
         User topRightUser,
         User bottomLeftUser,
-        List<String> moves
+        List<String> moves,
+        List<Joker> jokers
     ) {
         this.grid = grid;
         this.bottomRightUser = bottomRightUser;
@@ -65,6 +72,7 @@ public final class BattleRun implements Run {
         this.topRightUser = topRightUser;
         this.bottomLeftUser = bottomLeftUser;
         this.moves = moves;
+        this.jokers = jokers;
     }
 
     public Long getId() {
@@ -126,5 +134,13 @@ public final class BattleRun implements Run {
 
     public void setMoves(List<String> moves) {
         this.moves = moves;
+    }
+
+    public List<Joker> getJokers() {
+        return jokers;
+    }
+
+    public void setJokers(List<Joker> jokers) {
+        this.jokers = jokers;
     }
 }

@@ -5,18 +5,18 @@ import java.util.*;
 public final class Game {
 
     private final List<Player> players;
-    private final List<Grid> history = new ArrayList<>();
+    private final List<EnrichedGrid> history = new ArrayList<>();
     private final Grid grid;
     private final Random random = new Random();
 
     public Game(List<Player> players, Grid grid) {
         this.players = players;
         this.grid = grid;
-        this.history.add(new Grid(grid));
+        this.history.add(new EnrichedGrid(new Grid(grid), Joker.NONE));
         initPlayers();
     }
 
-    public List<Grid> getHistory() {
+    public List<EnrichedGrid> getHistory() {
         return history;
     }
 
@@ -29,7 +29,11 @@ public final class Game {
     }
 
     public void saveHistory() {
-        history.add(new Grid(grid));
+        saveHistory(Joker.NONE);
+    }
+
+    public void saveHistory(Joker joker) {
+        history.add(new EnrichedGrid(new Grid(grid), joker));
     }
 
     public void initPlayers() {
@@ -38,7 +42,11 @@ public final class Game {
 
     public void run(int turn, String answer) {
         Player currentPlayer = getCurrentPlayer(turn);
-        if (currentPlayer.isGameOver() || currentPlayer.isZapped()) {
+        if (currentPlayer.isGameOver()) {
+            saveHistory();
+            return;
+        }
+        if (currentPlayer.isZapped()) {
             currentPlayer.setCursedJoker(Joker.NONE);
             saveHistory();
             return;
@@ -46,12 +54,17 @@ public final class Game {
         String[] lines = answer.split(" ");
         Integer newColor = Integer.valueOf(lines[0]);
         long previousTiles = grid.countTiles(currentPlayer);
-        useJokers(currentPlayer, lines);
-        run(turn, newColor);
+
+        Joker usedJoker = useJokers(currentPlayer, lines);
+        run(turn, newColor, usedJoker);
         winJokers(currentPlayer, previousTiles);
     }
 
     public void run(int turn, int newColor) {
+        run(turn, newColor, Joker.NONE);
+    }
+
+    public void run(int turn, int newColor, Joker usedJoker) {
         Player currentPlayer = getCurrentPlayer(turn);
         if (currentPlayer.isGameOver()) {
             return;
@@ -61,7 +74,7 @@ public final class Game {
             grid.color(currentPlayer.startingTile(),
                     currentPlayer.currentColor(grid), newColor);
         }
-        history.add(new Grid(grid));
+        saveHistory(usedJoker);
     }
 
     public Player getCurrentPlayer(int turn) {
@@ -71,7 +84,7 @@ public final class Game {
     public void gameOver(int turn) {
         Player currentPlayer = getCurrentPlayer(turn);
         currentPlayer.setGameOver(true);
-        history.add(new Grid(grid));
+        history.add(new EnrichedGrid(new Grid(grid), Joker.NONE));
     }
 
     public boolean isFinished() {
@@ -88,7 +101,7 @@ public final class Game {
 
     public Grid getGrid(Joker joker) {
         if (joker == Joker.SHADOW) {
-            return history.getFirst();
+            return history.getFirst().grid();
         }
         return grid;
     }
@@ -97,40 +110,46 @@ public final class Game {
         return grid.colors().size();
     }
 
-    private void useJokers(Player currentPlayer, String[] lines) {
+    private Joker useJokers(Player currentPlayer, String[] lines) {
         currentPlayer.setCursedJoker(Joker.NONE);
-        int index = 1;
-        while (index < lines.length) {
-            String line = lines[index];
-            Joker joker = Joker.getJoker(line);
-            index++;
-            switch (joker) {
-                case Joker jok when currentPlayer.getJokerCounter(jok) == 0 -> {}
-                case NONE -> {}
-                case ZAP, SHADOW -> {
-                    currentPlayer.useJoker(joker);
-                    players
-                        .stream()
-                        .filter(enemyPlayer -> !enemyPlayer.equals(currentPlayer) && enemyPlayer.getCursedJoker() == Joker.NONE)
-                        .forEach(enemyPlayer -> enemyPlayer.setCursedJoker(joker));
-                }
-                case ARCANE_THIEF -> {
-                    List<Player> enemies = players.stream()
-                        .filter(enemy -> !enemy.equals(currentPlayer))
-                        .toList();
-                    Player chosenPlayer = enemies.get(random.nextInt(enemies.size()));
-                    currentPlayer.useJoker(Joker.ARCANE_THIEF);
-                    if (chosenPlayer.getJokerCounter(Joker.ZAP) > 0 && !chosenPlayer.isProtected()) {
-                        currentPlayer.winJoker(Joker.ZAP);
-                        chosenPlayer.useJoker(Joker.ZAP);
-                    } else {
-                        currentPlayer.setCursedJoker(Joker.ZAP);
-                        chosenPlayer.winJoker(Joker.ZAP);
-                    }
-                }
-                case SHIELD -> currentPlayer.setCursedJoker(Joker.SHIELD);
-            }
+        if (lines.length == 1) {
+            return Joker.NONE;
         }
+        Joker joker = Joker.getJoker(lines[1]);
+        Joker res = Joker.NONE;
+
+        if (currentPlayer.getJokerCounter(joker) > 0) {
+            res = joker;
+        }
+
+        switch (joker) {
+            case Joker jok when currentPlayer.getJokerCounter(jok) == 0 -> {}
+            case NONE -> {}
+            case ZAP, SHADOW -> {
+                currentPlayer.useJoker(joker);
+                players
+                    .stream()
+                    .filter(enemyPlayer -> !enemyPlayer.equals(currentPlayer) && enemyPlayer.getCursedJoker() == Joker.NONE)
+                    .forEach(enemyPlayer -> enemyPlayer.setCursedJoker(joker));
+            }
+            case ARCANE_THIEF -> {
+                List<Player> enemies = players.stream()
+                    .filter(enemy -> !enemy.equals(currentPlayer))
+                    .toList();
+                Player chosenPlayer = enemies.get(random.nextInt(enemies.size()));
+                currentPlayer.useJoker(Joker.ARCANE_THIEF);
+                if (chosenPlayer.getJokerCounter(Joker.ZAP) > 0 && !chosenPlayer.isProtected()) {
+                    currentPlayer.winJoker(Joker.ZAP);
+                    chosenPlayer.useJoker(Joker.ZAP);
+                } else {
+                    currentPlayer.setCursedJoker(Joker.ZAP);
+                    chosenPlayer.winJoker(Joker.ZAP);
+                }
+            }
+            case SHIELD -> currentPlayer.setCursedJoker(Joker.SHIELD);
+        }
+
+        return res;
     }
 
     public void winJokers(Player player, long previousTiles) {

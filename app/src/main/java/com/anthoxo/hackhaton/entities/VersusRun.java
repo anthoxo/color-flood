@@ -1,6 +1,8 @@
 package com.anthoxo.hackhaton.entities;
 
+import com.anthoxo.hackhaton.entities.converters.JokerConverter;
 import com.anthoxo.hackhaton.entities.converters.MoveConverter;
+import com.anthoxo.hackhaton.models.Joker;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -14,13 +16,13 @@ public final class VersusRun implements Run {
     @Id
     @GeneratedValue(generator = "versus-run-generator")
     @GenericGenerator(
-            name = "versus-run-generator",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @Parameter(name = "sequence_name", value = "versus_runs_sequence"),
-                    @Parameter(name = "initial_value", value = "1"),
-                    @Parameter(name = "increment_size", value = "1")
-            }
+        name = "versus-run-generator",
+        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+        parameters = {
+            @Parameter(name = "sequence_name", value = "versus_runs_sequence"),
+            @Parameter(name = "initial_value", value = "1"),
+            @Parameter(name = "increment_size", value = "1")
+        }
     )
     private Long id;
 
@@ -41,18 +43,25 @@ public final class VersusRun implements Run {
     @Column(name = "moves")
     private List<String> moves;
 
+    @Convert(converter = JokerConverter.class)
+    @Column(name = "jokers")
+    private List<Joker> jokers;
+
     public VersusRun() {
     }
 
     public VersusRun(
-            GridEntity grid,
-            User topLeftUser,
-            User bottomRightUser,
-            List<String> moves) {
+        GridEntity grid,
+        User topLeftUser,
+        User bottomRightUser,
+        List<String> moves,
+        List<Joker> jokers
+    ) {
         this.grid = grid;
         this.topLeftUser = topLeftUser;
         this.bottomRightUser = bottomRightUser;
         this.moves = moves;
+        this.jokers = jokers;
     }
 
     public Long getId() {
@@ -98,6 +107,14 @@ public final class VersusRun implements Run {
 
     public void setMoves(List<String> moves) {
         this.moves = moves;
+    }
+
+    public List<Joker> getJokers() {
+        return jokers;
+    }
+
+    public void setJokers(List<Joker> jokers) {
+        this.jokers = jokers;
     }
 }
 

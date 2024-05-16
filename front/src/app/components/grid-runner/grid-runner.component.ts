@@ -1,5 +1,5 @@
-import { Component, computed, DestroyRef, input, signal } from '@angular/core';
-import { GridResultDto } from '../../models/grid.model';
+import { Component, computed, DestroyRef, input, Signal, signal } from '@angular/core';
+import { GridResultDto, StartingTile } from '../../models/grid.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval, Subscription, take } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
@@ -31,11 +31,31 @@ export class GridRunnerComponent {
     }
     return [];
   });
+  nbOfPlayers: Signal<number> = computed(() => {
+    const gridResultDto = this.gridResultDto();
+    if (gridResultDto !== undefined) {
+      return gridResultDto.statistics.length;
+    }
+    return 1;
+  });
+
   turnNumber = computed(() => this.history().length - 1);
 
   index = signal(0);
-  grid = computed(() => {
+
+  enrichedGrid = computed(() => {
     return this.history()[this.index()];
+  });
+  grid = computed(() => {
+    return this.enrichedGrid().grid;
+  });
+  usedJoker = computed(() => {
+    return this.enrichedGrid().usedJoker;
+  });
+
+  startingTile: Signal<StartingTile> = computed(() => {
+    const tiles: StartingTile[] = ['TOP_LEFT', 'BOTTOM_RIGHT', 'TOP_RIGHT', 'BOTTOM_LEFT'];
+    return tiles[(this.index() - 1) % this.nbOfPlayers()]
   });
 
   currentSubscription = signal<Subscription | undefined>(undefined);

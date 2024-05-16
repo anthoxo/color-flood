@@ -7,6 +7,7 @@ import com.anthoxo.hackhaton.entities.SoloRun;
 import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Grid;
+import com.anthoxo.hackhaton.models.Joker;
 import com.anthoxo.hackhaton.services.game.GameResolverService;
 import com.anthoxo.hackhaton.services.game.SoloRunService;
 import com.anthoxo.hackhaton.services.ladder.EloService;
@@ -41,9 +42,11 @@ public class SoloContestService {
             users.forEach(user -> {
                 Grid grid = new Grid(gridEntity);
                 List<String> moves;
+                List<Joker> jokers;
                 try {
                     GridResultDto gridResultDto = soloRunService.run(user, grid);
                     moves = gameResolverService.computeMoves(gridResultDto);
+                    jokers = gameResolverService.computeJokers(gridResultDto);
                 } catch (GameCancelledException ex) {
                     LOGGER.error(
                             "Something happen during the running, move set to 300.", ex);
@@ -51,9 +54,12 @@ public class SoloContestService {
                             .mapToObj(i -> 1)
                             .map(String::valueOf)
                             .toList();
+                    jokers = IntStream.range(0, 300)
+                        .mapToObj(i -> Joker.NONE)
+                        .toList();
                 }
 
-                soloRunService.save(user, gridEntity, moves);
+                soloRunService.save(user, gridEntity, moves, jokers);
             });
             List<SoloRun> soloRuns = soloRunService.findAllByGrid(gridEntity);
             eloService.computeElo(soloRuns);

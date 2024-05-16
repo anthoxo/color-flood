@@ -1,6 +1,13 @@
 export interface GridResultDto {
-  history: Grid[];
+  history: EnrichedGrid[];
   statistics: Statistic[];
+}
+
+export type Joker = 'ZAP' | 'SHADOW' | 'SHIELD' | 'ARCANE_THIEF' | 'NONE';
+
+export interface EnrichedGrid {
+  grid: Grid;
+  usedJoker: Joker;
 }
 
 export interface Grid {

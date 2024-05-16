@@ -1,6 +1,6 @@
 @if (grid() !== undefined) {
   <div class="flex flex-col w-full h-full gap-y-4">
-    <grid [config]="grid()"></grid>
+    <grid [config]="grid()" [usedJoker]="usedJoker()" [jokerPosition]="startingTile()"></grid>
     <div class="flex w-full justify-between gap-x-4">
       <div class="flex gap-x-2">
         @if (isRunning()) {

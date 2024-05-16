@@ -6,6 +6,7 @@ import com.anthoxo.hackhaton.entities.GridEntity;
 import com.anthoxo.hackhaton.entities.User;
 import com.anthoxo.hackhaton.exceptions.GameCancelledException;
 import com.anthoxo.hackhaton.models.Grid;
+import com.anthoxo.hackhaton.models.Joker;
 import com.anthoxo.hackhaton.repositories.BattleRunRepository;
 import com.anthoxo.hackhaton.services.game.BattleRunService;
 import com.anthoxo.hackhaton.services.game.GameResolverService;
@@ -78,10 +79,12 @@ public class BattleContestService {
         try {
             GridResultDto gridResultDto = battleRunService.run(user1, user2, user3, user4, grid);
             List<String> moves = gameResolverService.computeMoves(gridResultDto);
+            List<Joker> jokers = gameResolverService.computeJokers(gridResultDto);
             BattleRun battleRun = new BattleRun(
                 gridEntity,
                 user1, user2, user3, user4,
-                moves
+                moves,
+                jokers
             );
             battleRunRepository.save(battleRun);
             eloService.computeElo(battleRun);
@@ -90,6 +93,7 @@ public class BattleContestService {
             BattleRun battleRun = new BattleRun(
                 gridEntity,
                 user1, user2, user3, user4,
+                List.of(),
                 List.of()
             );
             battleRunRepository.save(battleRun);
