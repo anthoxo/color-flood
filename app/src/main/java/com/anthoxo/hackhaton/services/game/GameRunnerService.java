@@ -14,6 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class GameRunnerService {
@@ -25,8 +28,10 @@ public class GameRunnerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GameRunnerService.class);
 
+
     private final GridService gridService;
     private final FileUtilsService fileUtilsService;
+    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     public GameRunnerService(GridService gridService,
         FileUtilsService fileUtilsService) {
@@ -101,14 +106,16 @@ public class GameRunnerService {
             }
             long start = System.nanoTime();
             try {
-                String answer = scanner.nextLine();
+                String answer = executorService.submit(
+                    () -> scanner.nextLine()
+                ).get(2, TimeUnit.SECONDS);
                 double elapsedTimeInMs = (System.nanoTime() - start) / 1e6;
                 throwExceptionIfTooLong(turn, elapsedTimeInMs);
                 Integer res = Integer.valueOf(answer);
                 game.run(turn, res);
             } catch (Exception ex) {
-                LOGGER.error("Something happens for the player={}, ex={}",
-                    game.getCurrentPlayer(turn), ex.getMessage());
+                LOGGER.error("Something happens for the player={}, turn={}, ex={}",
+                    game.getCurrentPlayer(turn), turn, ex.getMessage());
                 game.gameOver(turn);
             }
             if (game.isFinished()) {

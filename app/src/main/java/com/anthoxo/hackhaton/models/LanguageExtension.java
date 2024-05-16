@@ -5,7 +5,8 @@ import java.util.stream.Stream;
 
 public enum LanguageExtension {
     JAVA("java", "java"),
-    PYTHON("py", "python3");
+    PYTHON("py", "python3"),
+    TYPESCRIPT("ts", "ts-node");
 
     private String extensionName;
     private String commandRunner;
