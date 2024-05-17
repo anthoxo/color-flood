@@ -53,7 +53,7 @@ public final class Game {
         }
         String[] lines = answer.split(" ");
         Integer newColor = Integer.valueOf(lines[0]);
-        long previousTiles = grid.countTiles(currentPlayer);
+        long previousTiles = grid.countZone(currentPlayer);
 
         Joker usedJoker = useJokers(currentPlayer, lines);
         run(turn, newColor, usedJoker);
@@ -146,7 +146,10 @@ public final class Game {
                     chosenPlayer.winJoker(Joker.ZAP);
                 }
             }
-            case SHIELD -> currentPlayer.setCursedJoker(Joker.SHIELD);
+            case SHIELD -> {
+                currentPlayer.useJoker(Joker.SHIELD);
+                currentPlayer.setCursedJoker(Joker.SHIELD);
+            }
         }
 
         return res;
@@ -155,7 +158,7 @@ public final class Game {
     public void winJokers(Player player, long previousTiles) {
         int step = getSize();
         long previous = previousTiles / step;
-        long current = grid.countTiles(player) / step;
+        long current = grid.countZone(player) / step;
         for (long i = previous; i < current; ++i) {
             if (i % 2 == 0) {
                 player.winJoker(Joker.ZAP);

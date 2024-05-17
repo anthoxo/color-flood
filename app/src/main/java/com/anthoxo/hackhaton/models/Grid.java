@@ -77,4 +77,43 @@ public record Grid(List<List<Integer>> colors) {
             .filter(i -> currentColor == i)
             .count();
     }
+
+    public long countZone(Player player) {
+        List<List<Boolean>> passed = new ArrayList<>();
+        for (int row = 0; row < colors.size(); row++) {
+            List<Boolean> passedRow = new ArrayList<>();
+            for (int col = 0; col < colors.get(row).size(); col++) {
+                passedRow.add(Boolean.FALSE);
+            }
+            passed.add(passedRow);
+        }
+        int startRow = player.startingTile().getRow(colors.size());
+        int startCol = player.startingTile().getCol(colors.size());
+
+        return countZone(startRow, startCol, player.currentColor(this), passed);
+    }
+
+    private long countZone(int row, int col, int color, List<List<Boolean>> passed) {
+        int gridColor = colors.get(row).get(col);
+        if (color != gridColor || passed.get(row).get(col).booleanValue()) {
+            return 0;
+        }
+
+        passed.get(row).set(col, Boolean.TRUE);
+
+        long result = 1;
+        if (row + 1 < colors.size()) {
+            result += countZone(row + 1, col, color, passed);
+        }
+        if (col + 1 < colors.size()) {
+            result += countZone(row, col + 1, color, passed);
+        }
+        if (row > 0) {
+            result += countZone(row - 1, col, color, passed);
+        }
+        if (col > 0) {
+            result += countZone(row, col - 1, color, passed);
+        }
+        return result;
+    }
 }
