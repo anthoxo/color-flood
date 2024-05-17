@@ -51,11 +51,7 @@ public class GameRunnerService {
                     fileUtilsService.getExtensionOrThrow(player.pathFile())
                         .getCommandRunner(),
                     player.pathFile());
-                if (shouldSaveErrorFile) {
-                    processBuilder.redirectError(new File("error.txt"));
-                } else {
-                    processBuilder.redirectErrorStream(true);
-                }
+                processBuilder.redirectError(new File("error.txt"));
                 try {
                     return processBuilder.start();
                 } catch (IOException e) {

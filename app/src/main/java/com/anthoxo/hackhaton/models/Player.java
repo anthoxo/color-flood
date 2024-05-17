@@ -36,12 +36,16 @@ public final class Player {
     }
 
     public String getJokersForProgram() {
-        return jokers.entrySet()
+        String result = jokers.entrySet()
             .stream()
             .filter(entry -> entry.getValue() > 0)
             .map(Map.Entry::getKey)
             .map(Joker::toString)
             .collect(Collectors.joining(","));
+        if (result.isEmpty()) {
+            return "NONE";
+        }
+        return result;
     }
 
     public int getJokerCounter(Joker joker) {

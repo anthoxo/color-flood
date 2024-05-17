@@ -5,8 +5,8 @@ public class RandomExample {
     public static void main(String... args)  {
         Random rand = new Random();
         Scanner in = new Scanner(System.in);
-        int size = in.nextInt();
-        int numberOfPlayers = in.nextInt();
+        int size = Integer.valueOf(in.nextLine());
+        int numberOfPlayers = Integer.valueOf(in.nextLine());
 
         while (true) {
             String cursed = in.nextLine(); // NONE, ZAP, SHIELD, SHADOW
