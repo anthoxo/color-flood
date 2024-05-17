@@ -61,6 +61,12 @@ public class GameRunnerService {
                 }
             }).toList();
 
+        
+        List<Scanner> scanners = processes
+            .stream()
+            .map(process -> new Scanner(process.getInputStream()))
+            .toList();
+
         int size = game.getSize();
         int numberOfPlayers = game.getPlayers().size();
         try {
@@ -81,7 +87,7 @@ public class GameRunnerService {
                 continue;
             }
             Process process = processes.get(turn % game.getPlayers().size());
-            Scanner scanner = new Scanner(process.getInputStream());
+            Scanner scanner = scanners.get(turn % game.getPlayers().size());
             Grid rotatedGrid = gridService.rotateGridIfNeeded(game.getGrid(player),
                 player.startingTile());
             List<String> lines = gridService.getFormatGridForProgram(
@@ -132,6 +138,10 @@ public class GameRunnerService {
                 throw new IllegalStateException(
                     "should be exit before interrupted");
             }
+        }
+
+        for (Scanner scanner : scanners) {
+            scanner.close();
         }
     }
 
